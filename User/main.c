@@ -36,15 +36,16 @@ void main(void){
     LED_Init();
     K2_Init();
     DELAY_US(1000000);
-    //DELAY_US(1000000);
+
     OLED_Init();
     OLED_Clear();
     SPI_Init();
+    OLED_ShowPicture(34, 2, 60, 60, BtPic, 1);
+    OLED_Refresh();
+    DELAY_US(1000000);
    // ADC_Init();
    // Key_Init();
    // EXTI1_Init();
-
-
 
     //EPWM1_Init(5000);
    // EPWM2_Init(5000);

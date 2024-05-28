@@ -274,3 +274,31 @@ void OLED_ShowHex(Uint16 x, Uint16 y, Uint16 hex, Uint16 mode){
         temp=temp/16;
     }
 }
+
+void OLED_ShowPicture(Uint16 x,Uint16 y,Uint16 sizex,Uint16 sizey,U8 BMP[],Uint16 mode)
+{
+    Uint16 j=0;
+    Uint16 i,n,temp,m;
+    Uint16 x0=x,y0=y;
+    sizey=sizey/8+((sizey%8)?1:0);
+    for(n=0;n<sizey;n++){
+        for(i=0;i<sizex;i++){
+            temp=BMP[j];
+            j++;
+            for(m=0;m<8;m++){
+                if(temp&0x01)
+                    OLED_DrawPoint(x,y,mode);
+                else
+                    OLED_DrawPoint(x,y,!mode);
+                temp>>=1;
+                y++;
+            }
+            x++;
+            if((x-x0)==sizex){
+                x=x0;
+                y0=y0+8;
+            }
+            y=y0;
+        }
+     }
+}

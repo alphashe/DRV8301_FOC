@@ -46,4 +46,7 @@ void OLED_ShowChar(Uint16 x,Uint16 y,char chr,Uint16 mode);
 void OLED_ShowString(Uint16 x,Uint16 y,char *chr,Uint16 mode);
 void OLED_ShowInt(Uint16 x, Uint16 y, Uint32 num, Uint16 mode);
 void OLED_ShowHex(Uint16 x, Uint16 y, Uint16 hex, Uint16 mode);
+void OLED_ShowPicture(Uint16 x,Uint16 y,Uint16 sizex,Uint16 sizey,U8 BMP[],Uint16 mode);
+
+
 #endif /* APP_INCLUDE_OLED_H_ */

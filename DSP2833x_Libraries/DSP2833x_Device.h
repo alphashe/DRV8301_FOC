@@ -87,6 +87,7 @@ extern cregister volatile unsigned int IER;
 
 #ifndef DSP28_DATA_TYPES
 #define DSP28_DATA_TYPES
+typedef unsigned char   U8;
 typedef int             int16;
 typedef long            int32;
 typedef unsigned int    Uint16;

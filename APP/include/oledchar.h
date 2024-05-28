@@ -9,8 +9,8 @@
 #define APP_INCLUDE_OLEDCHAR_H_
 
 extern unsigned char asc2_0806[][6];
-extern unsigned char BMP1[] ;
 
+extern unsigned char BtPic[];
 
 
 #endif /* APP_INCLUDE_OLEDCHAR_H_ */
