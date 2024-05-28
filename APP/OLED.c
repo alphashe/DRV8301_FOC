@@ -199,6 +199,7 @@ void OLED_Refresh_fix(Uint16 x1, Uint16 x2, Uint16 y){
     I2C_Stop();
 }
 
+//X:0~128 y:0~64
 void OLED_DrawPoint(Uint16 x,Uint16 y,Uint16 t)
 {
     Uint16 i,m,n;
@@ -214,6 +215,7 @@ void OLED_DrawPoint(Uint16 x,Uint16 y,Uint16 t)
     }
 }
 
+//X:0~128 y:0~64
 void OLED_ShowChar(Uint16 x,Uint16 y,char chr, Uint16 mode)
 {
     Uint16 i,m,temp,size2,chr1;
@@ -238,6 +240,7 @@ void OLED_ShowChar(Uint16 x,Uint16 y,char chr, Uint16 mode)
   }
 }
 
+//X:0~128 y:0~64
 void OLED_ShowString(Uint16 x,Uint16 y,char *chr,Uint16 mode)
 {
     while((*chr>=' ')&&(*chr<='~'))//
@@ -248,6 +251,7 @@ void OLED_ShowString(Uint16 x,Uint16 y,char *chr,Uint16 mode)
   }
 }
 
+//X:0~128 y:0~64
 void OLED_ShowInt(Uint16 x, Uint16 y, Uint32 num, Uint16 mode){
     Uint16 bitnum=0;
     Uint32 temp = num;
@@ -263,6 +267,7 @@ void OLED_ShowInt(Uint16 x, Uint16 y, Uint32 num, Uint16 mode){
 
 }
 
+//X:0~128 y:0~64
 void OLED_ShowHex(Uint16 x, Uint16 y, Uint16 hex, Uint16 mode){
     Uint16 temp=hex, i=0;
     for(i=0;i<4;i++){
@@ -275,6 +280,7 @@ void OLED_ShowHex(Uint16 x, Uint16 y, Uint16 hex, Uint16 mode){
     }
 }
 
+//X:0~128 y:0~64
 void OLED_ShowPicture(Uint16 x,Uint16 y,Uint16 sizex,Uint16 sizey,U8 BMP[],Uint16 mode)
 {
     Uint16 j=0;

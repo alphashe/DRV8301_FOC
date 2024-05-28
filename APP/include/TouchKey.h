@@ -5,8 +5,8 @@
  *      Author: alpha
  */
 
-#ifndef APP_INCLUDE_KEY_H_
-#define APP_INCLUDE_KEY_H_
+#ifndef APP_INCLUDE_TOUCHKEY_H_
+#define APP_INCLUDE_TOUCHKEY_H_
 
 #include "DSP2833x_Device.h"
 #include "DSP2833x_Examples.h"
@@ -29,4 +29,4 @@ interrupt void EXTI2_KEY2(void);
 Uint32 measurekey2(void);
 void Init_Key_Time(void);
 Uint16 Scan_Key(void);
-#endif /* APP_INCLUDE_KEY_H_ */
+#endif /* APP_INCLUDE_TOUCHKEY_H_ */

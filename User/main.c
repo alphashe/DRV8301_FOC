@@ -1,10 +1,10 @@
 
+#include <TouchKey.h>
 #include "DSP2833x_Device.h"
 #include "DSP2833x_Examples.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
-#include "KEY.h"
 #include "ADC.h"
 #include "INT.h"
 #include "TIME.h"
@@ -31,10 +31,10 @@ void main(void){
 	IFR = 0x0000;   //clear all interrupt flag
 	InitPieVectTable();
 
-	TIM0_Init(0, 1000000);    //150MHz 0divide ->6.7nS, count 1000 000 ->6.7mS
+	TIM0_Init(150-1, 700000-1);    //150MHz 150 divide ->1uS, count 700*1000  ->700mS
 	DELAY_US(100);
     LED_Init();
-    K2_Init();
+    //K2_Init();
     DELAY_US(1000000);
 
     OLED_Init();
@@ -61,15 +61,16 @@ void main(void){
     //Init_Key_Time();
 	while(1){
 	    DELAY_US(15*1000);
-
-	    OLED_Refresh();
-	   // fx=CpuTimer0Regs.TIM.all;
-	   fx = Scan_Key();
+	    OLED_ShowInt(121, 48, fx, 1);
+	    OLED_Refresh_fix(121, 127, 6);
+	    realtime=CpuTimer0Regs.TIM.all;
+	    OLED_ShowInt(0, 40, realtime, 1);
+	    OLED_Refresh_fix(0, 127, 5);
+	   fx++;
 	   // if(fx==500000){
 	   //     LED4_TOGGLE;
 	   // }
 	    if(fx==9){
-	        LED3_TOGGLE;
 
 	        fx=0;
 	    }

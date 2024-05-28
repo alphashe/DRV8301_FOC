@@ -4,7 +4,7 @@
  *  Created on: 2024Äê3ÔÂ26ÈÕ
  *      Author: alpha
  */
-#include "KEY.h"
+#include <TouchKey.h>
 volatile Uint32 keytime=0;   //every time to read
 int32 newkeytime[4]={0,0,0,0};    //the new station of key
 int32 initkeytime[4]={0,0,0,0};
@@ -34,7 +34,6 @@ void K2_Init(void){
     ERTM;
 
 }
-
 
 void Init_Key_Time(void){
     Uint16 i=0;
