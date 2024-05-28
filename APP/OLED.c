@@ -157,7 +157,16 @@ void OLED_Clear(void){
         for(n=0;n<128;n++)
             OLED_GRAM[n][i]=0;//clear all data
     }
-    OLED_Refresh();//
+    //OLED_Refresh();//
+}
+
+//x:0~127  y:0~7
+void OLED_Clear_fix(U8 x1, U8 x2, U8 y1, U8 y2){
+    U8 i,n;
+    for(i=y1;i<=y2;i++){
+        for(n=x1;n<=x2;n++)
+            OLED_GRAM[n][i]=0;//clear all data
+    }
 }
 
 void OLED_Refresh(void){

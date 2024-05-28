@@ -13,6 +13,7 @@
 #include "OLED.h"
 #include "SPI.h"
 #include "oledchar.h"
+#include <DRV8301.h>
 //定义变量
 
 
@@ -26,6 +27,7 @@ void main(void){
     Uint16 i=0;
     Uint32 realtime=0;
     Uint32 shownum=0;
+    struct struct_DRV8301 *p8301;
 	InitPieCtrl();
 	IER = 0x0000;   //disable all interrupt
 	IFR = 0x0000;   //clear all interrupt flag
@@ -39,10 +41,12 @@ void main(void){
 
     OLED_Init();
     OLED_Clear();
-    SPI_Init();
+
     OLED_ShowPicture(34, 2, 60, 60, BtPic, 1);
     OLED_Refresh();
+
     DELAY_US(1000000);
+    p8301 = DRV8301_Init();
    // ADC_Init();
    // Key_Init();
    // EXTI1_Init();
@@ -60,6 +64,7 @@ void main(void){
 
     //Init_Key_Time();
 	while(1){
+
 	    DELAY_US(15*1000);
 	    OLED_ShowInt(121, 48, fx, 1);
 	    OLED_Refresh_fix(121, 127, 6);
