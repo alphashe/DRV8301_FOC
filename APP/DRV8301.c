@@ -13,7 +13,7 @@ struct struct_DRV8301* DRV8301_Init(void){
     SPI_Init();
     DRV8301GPIO_Init();
 
-    DRV8301_Enable();
+    DRV8301_Enable(&drv8301);
     DELAY_US(10000);
 
     DRV8301_Read(&drv8301);
@@ -51,11 +51,6 @@ void DRV8301_Display(struct struct_DRV8301 temp){
         OLED_ShowString(0, 8, "Disconnect!", 1);
     else
         OLED_ShowInt(60, 8, temp.device_id, 1);
-
-    if(temp.en_buck==1)
-        OLED_ShowString(48, 16, "On ", 1);
-    else
-        OLED_ShowString(48, 16, "off", 1);
 
     if(temp.en_gate==1)
         OLED_ShowString(48, 24, "On ", 1);
@@ -112,13 +107,25 @@ void DRV8301GPIO_Init(void){
     GpioCtrlRegs.GPAMUX1.bit.EN_GATE = GPIOMUX_GPIO;
     GpioCtrlRegs.GPADIR.bit.EN_GATE = GPIODIR_OUTPUT;   //OUTPUT
     GpioCtrlRegs.GPAPUD.bit.EN_GATE = GPIOPUD_PULLUP;   //PULLUP
-    GpioCtrlRegs.GPAMUX1.bit.EN_GATE = GPIOMUX_GPIO;
-    GpioCtrlRegs.GPADIR.bit.EN_GATE = GPIODIR_OUTPUT;   //OUTPUT
-    GpioCtrlRegs.GPAPUD.bit.EN_GATE = GPIOPUD_PULLUP;   //PULLUP
+    GpioCtrlRegs.GPAMUX1.bit.DC_CAL = GPIOMUX_GPIO;
+    GpioCtrlRegs.GPADIR.bit.DC_CAL = GPIODIR_OUTPUT;   //OUTPUT
+    GpioCtrlRegs.GPAPUD.bit.DC_CAL = GPIOPUD_PULLUP;   //PULLUP
+
+    //init INPUT
+    GpioCtrlRegs.GPAMUX2.bit.PWRGD = GPIOMUX_GPIO;
+    GpioCtrlRegs.GPADIR.bit.PWRGD = GPIODIR_INPUT;   //input
+    GpioCtrlRegs.GPAPUD.bit.PWRGD = GPIOPUD_FLOAT;   //float
+    GpioCtrlRegs.GPAMUX1.bit.NOCTW = GPIOMUX_GPIO;
+    GpioCtrlRegs.GPADIR.bit.NOCTW = GPIODIR_INPUT;   //input
+    GpioCtrlRegs.GPAPUD.bit.NOCTW = GPIOPUD_FLOAT;   //float
+    GpioCtrlRegs.GPAMUX1.bit.NFAULT = GPIOMUX_GPIO;
+    GpioCtrlRegs.GPADIR.bit.NFAULT = GPIODIR_INPUT;   //input
+    GpioCtrlRegs.GPAPUD.bit.NFAULT = GPIOPUD_FLOAT;   //float
 
     EDIS;
 
-    EN_GATE_H;
+    EN_GATE_L;
+    DC_CAL_H;
 
 }
 
@@ -140,4 +147,19 @@ void DRV8301_Disable(struct struct_DRV8301* temp){
     EN_GATE_L;
     temp->en_gate=0;
     DRV8301_Display(*temp);
+}
+
+void DRV8301_SenseOp(struct struct_DRV8301* temp){
+    DC_CAL_L;
+    temp->dc_cal=0;
+}
+void DRV8301_SenseCal(struct struct_DRV8301* temp){
+    DC_CAL_H;
+    temp->dc_cal=1;
+}
+
+void DRV8301_Check(struct struct_DRV8301* temp){
+    temp->pwrgd = PWRGD_I;
+    temp->nfault = NFAULT_I;
+    temp->noctw = NOCTW_I;
 }

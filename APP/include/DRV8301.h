@@ -16,11 +16,18 @@
 
 #define EN_GATE     GPIO11
 #define DC_CAL      GPIO10
+#define PWRGD       GPIO17
+#define NOCTW       GPIO12
+#define NFAULT      GPIO13
 
 #define EN_GATE_H   GpioDataRegs.GPASET.bit.EN_GATE=1
 #define EN_GATE_L   GpioDataRegs.GPACLEAR.bit.EN_GATE=1
 #define DC_CAL_H    GpioDataRegs.GPASET.bit.DC_CAL=1
 #define DC_CAL_L    GpioDataRegs.GPACLEAR.bit.DC_CAL=1
+
+#define PWRGD_I       GpioDataRegs.GPADAT.bit.PWRGD
+#define NOCTW_I       GpioDataRegs.GPADAT.bit.NOCTW
+#define NFAULT_I       GpioDataRegs.GPADAT.bit.NFAULT
 
 struct struct_DRV8301{
 
@@ -61,9 +68,11 @@ struct struct_DRV8301{
 
 
     //CTL
-    U8 en_buck;
     U8 en_gate;
     U8 dc_cal;
+    U8 pwrgd;
+    U8 noctw;
+    U8 nfault;
 
 };
 
@@ -76,7 +85,9 @@ void DRV8301_Read(struct struct_DRV8301* temp);
 void DRV8301_Contr(struct struct_DRV8301 temp);
 void DRV8301_Enable(struct struct_DRV8301* temp);
 void DRV8301_Disable(struct struct_DRV8301* temp);
-
+void DRV8301_SenseOp(struct struct_DRV8301* temp);
+void DRV8301_SenseCal(struct struct_DRV8301* temp);
+void DRV8301_Check(struct struct_DRV8301* temp);
 
 
 #endif /* APP_INCLUDE_DRV8301_H_ */
