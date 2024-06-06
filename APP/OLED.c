@@ -265,27 +265,49 @@ void OLED_ShowInt(Uint16 x, Uint16 y, Uint32 num, Uint16 mode){
     Uint16 bitnum=0;
     Uint32 temp = num;
     Uint16 i=0;
+    if(!num)
+        bitnum++;
     while(temp){
         bitnum++;
         temp=temp/10;
     }
     for(i=0;i<bitnum;i++){
-        OLED_ShowChar(x+6*bitnum-(6*i)-6, y, num%10 +'0',  1);
+        OLED_ShowChar(x+6*bitnum-(6*i)-6, y, num%10 +'0',  mode);
         num=num/10;
     }
 
 }
 
 //X:0~128 y:0~64
-void OLED_ShowHex(Uint16 x, Uint16 y, Uint16 hex, Uint16 mode){
-    Uint16 temp=hex, i=0;
-    for(i=0;i<4;i++){
-        if(temp%16<10)
-            OLED_ShowChar(x+18-(6*i), y, temp%16+'0', mode);
-        else
-            OLED_ShowChar(x+18-(6*i), y, temp%16-10+'A', mode);
-
+void OLED_ShowHex(Uint16 x, Uint16 y, Uint32 hex, Uint16 mode){
+    Uint32 temp=hex;
+    Uint16 i=0, bitnum=0;
+    if(!hex)
+        bitnum++;
+    while(temp){
+        bitnum++;
         temp=temp/16;
+    }
+    for(i=0;i<bitnum;i++){
+        if(hex%16<10)
+            OLED_ShowChar(x+6*bitnum-(6*i)-6, y, hex%16+'0', mode);
+        else
+            OLED_ShowChar(x+6*bitnum-(6*i)-6, y, hex%16-10+'A', mode);
+
+        hex=hex/16;
+    }
+}
+void OLED_ShowHexfix(Uint16 x, Uint16 y, Uint32 hex, Uint16 bitnum, Uint16 mode){
+    Uint32 temp=hex;
+    Uint16 i=0;
+
+    for(i=0;i<bitnum;i++){
+        if(hex%16<10)
+            OLED_ShowChar(x+6*bitnum-(6*i)-6, y, hex%16+'0', mode);
+        else
+            OLED_ShowChar(x+6*bitnum-(6*i)-6, y, hex%16-10+'A', mode);
+
+        hex=hex/16;
     }
 }
 

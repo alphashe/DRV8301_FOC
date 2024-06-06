@@ -41,8 +41,8 @@ void EPWM1_Init(Uint16 tbprd){
     // Set actions
     EPwm1Regs.AQCTLA.bit.ZRO = AQ_SET; // Set PWM1A on Zero
     EPwm1Regs.AQCTLA.bit.CAU = AQ_CLEAR; // Clear PWM1A on event A, up count
-    EPwm1Regs.AQCTLB.bit.ZRO = AQ_SET; // Set PWM1B on Zero
-    EPwm1Regs.AQCTLB.bit.CBU = AQ_CLEAR; // Clear PWM1B on event B, up count
+    EPwm1Regs.AQCTLB.bit.ZRO = AQ_CLEAR; // Set PWM1B on Zero
+    EPwm1Regs.AQCTLB.bit.CBU = AQ_SET; // Clear PWM1B on event B, up count
 
    // EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE; // enable Dead-band module
     //EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; // Active Hi complementary
@@ -92,8 +92,8 @@ void EPWM2_Init(Uint16 tbprd){
     // Set actions
     EPwm2Regs.AQCTLA.bit.ZRO = AQ_SET; // Set PWM1A on Zero
     EPwm2Regs.AQCTLA.bit.CAU = AQ_CLEAR; // Clear PWM1A on event A, up count
-    EPwm2Regs.AQCTLB.bit.ZRO = AQ_SET; // Set PWM1B on Zero
-    EPwm2Regs.AQCTLB.bit.CBU = AQ_CLEAR; // Clear PWM1B on event B, up count
+    EPwm2Regs.AQCTLB.bit.ZRO = AQ_CLEAR; // Set PWM1B on Zero
+    EPwm2Regs.AQCTLB.bit.CBU = AQ_SET; // Clear PWM1B on event B, up count
 
    // EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE; // enable Dead-band module
     //EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; // Active Hi complementary
@@ -143,8 +143,8 @@ void EPWM3_Init(Uint16 tbprd){
     // Set actions
     EPwm3Regs.AQCTLA.bit.ZRO = AQ_SET; // Set PWM1A on Zero
     EPwm3Regs.AQCTLA.bit.CAU = AQ_CLEAR; // Clear PWM1A on event A, up count
-    EPwm3Regs.AQCTLB.bit.ZRO = AQ_SET; // Set PWM1B on Zero
-    EPwm3Regs.AQCTLB.bit.CBU = AQ_CLEAR; // Clear PWM1B on event B, up count
+    EPwm3Regs.AQCTLB.bit.ZRO = AQ_CLEAR; // Set PWM1B on Zero
+    EPwm3Regs.AQCTLB.bit.CBU = AQ_SET; // Clear PWM1B on event B, up count
 
    // EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE; // enable Dead-band module
     //EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; // Active Hi complementary

@@ -22,7 +22,7 @@ void SPI_Init(void){
     SpiaRegs.SPICCR.all = 0x000F;   //reset SPI, transmit at up edge, receive at down edge, 16 bit data
     SpiaRegs.SPICTL.all = 0x0006;   //no phase delay, master mode
     SpiaRegs.SPIBRR = 0x007F;       //determine SPICLK
-    SpiaRegs.SPICCR.all = 0x009F;   //self test mode and exit reset status
+    SpiaRegs.SPICCR.all = 0x008F;   // exit reset status
     SpiaRegs.SPIPRI.bit.FREE = 1;   //free run
 }
 
