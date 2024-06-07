@@ -11,21 +11,21 @@
 #include "DSP2833x_Device.h"
 #include "DSP2833x_Examples.h"
 
-#define K1IO GPIO35
-#define K2IO GPIO72
-#define K3IO GPIO80
-#define K4IO GPIO28
-#define K5IO GPIO40
-#define K6IO GPIO30
-#define K7IO GPIO29
+#define K1 GPIO35
+#define K2 GPIO72
+#define K3 GPIO80
+#define K4 GPIO28
+#define K5 GPIO40
+#define K6 GPIO30
+#define K7 GPIO29
 
-#define K1 GpioDataRegs.GPBDAT.bit.K1IO
-#define K2 GpioDataRegs.GPCDAT.bit.K2IO
-#define K3 GpioDataRegs.GPCDAT.bit.K3IO
-#define K4 GpioDataRegs.GPADAT.bit.K4IO
-#define K5 GpioDataRegs.GPBDAT.bit.K5IO
-#define K6 GpioDataRegs.GPADAT.bit.K6IO
-#define K7 GpioDataRegs.GPADAT.bit.K7IO
+#define K1_I GpioDataRegs.GPBDAT.bit.K1
+#define K2_I GpioDataRegs.GPCDAT.bit.K2
+#define K3_I GpioDataRegs.GPCDAT.bit.K3
+#define K4_I GpioDataRegs.GPADAT.bit.K4
+#define K5_I GpioDataRegs.GPBDAT.bit.K5
+#define K6_I GpioDataRegs.GPADAT.bit.K6
+#define K7_I GpioDataRegs.GPADAT.bit.K7
 
 
 void PressKey_Init(void);

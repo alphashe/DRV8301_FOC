@@ -49,42 +49,6 @@ void OLED_Init(void){
     OLED_WR_Byte(0x14,OLED_CMD);//--set(0x10) disable
     OLED_Clear();
     OLED_WR_Byte(0xAF,OLED_CMD);
-   /*
-    OLED_WR_Byte(0xAE,OLED_CMD);//--display off
-    OLED_WR_Byte(0x00,OLED_CMD);//---set low column address
-    OLED_WR_Byte(0x10,OLED_CMD);//---set high column address
-    OLED_WR_Byte(0x40,OLED_CMD);//--set start line address
-    OLED_WR_Byte(0xB0,OLED_CMD);//--set page address
-    OLED_WR_Byte(0x81,OLED_CMD); // contract control
-    OLED_WR_Byte(0xFF,OLED_CMD);//--128
-    OLED_WR_Byte(0xA0,OLED_CMD);//！！！！设定x方向，0xA0选择正常方向（0xA1为反方向）
-    OLED_WR_Byte(0xA6,OLED_CMD);//--normal / reverse
-    OLED_WR_Byte(0xA8,OLED_CMD);//--set multiplex ratio(1 to 64)
-    OLED_WR_Byte(0x3F,OLED_CMD);//--1/32 duty
-    OLED_WR_Byte(0xC0,OLED_CMD);//！！！！设定Y方向，0xC8正常反向，0xC0为正常方向
-    OLED_WR_Byte(0xD3,OLED_CMD);//-set display offset
-    OLED_WR_Byte(0x00,OLED_CMD);//
-
-    OLED_WR_Byte(0xD5,OLED_CMD);//set osc division
-    OLED_WR_Byte(0x80,OLED_CMD);//
-
-    OLED_WR_Byte(0xD8,OLED_CMD);//set area color mode off
-    OLED_WR_Byte(0x05,OLED_CMD);//
-
-    OLED_WR_Byte(0xD9,OLED_CMD);//Set Pre-Charge Period
-    OLED_WR_Byte(0xF1,OLED_CMD);//
-
-    OLED_WR_Byte(0xDA,OLED_CMD);//set com pin configuartion
-    OLED_WR_Byte(0x12,OLED_CMD);//
-
-    OLED_WR_Byte(0xDB,OLED_CMD);//set Vcomh
-    OLED_WR_Byte(0x30,OLED_CMD);//
-
-    OLED_WR_Byte(0x8D,OLED_CMD);//set charge pump enable
-    OLED_WR_Byte(0x14,OLED_CMD);//
-
-    OLED_WR_Byte(0xAF,OLED_CMD);//--turn on oled panel
-*/
 
 }
 
@@ -298,9 +262,7 @@ void OLED_ShowHex(Uint16 x, Uint16 y, Uint32 hex, Uint16 mode){
     }
 }
 void OLED_ShowHexfix(Uint16 x, Uint16 y, Uint32 hex, Uint16 bitnum, Uint16 mode){
-    Uint32 temp=hex;
     Uint16 i=0;
-
     for(i=0;i<bitnum;i++){
         if(hex%16<10)
             OLED_ShowChar(x+6*bitnum-(6*i)-6, y, hex%16+'0', mode);

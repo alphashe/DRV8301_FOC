@@ -9,26 +9,22 @@
 
 struct struct_DRV8301* DRV8301_Init(void){
     static struct struct_DRV8301 drv8301;
-
+    drv8301.PWMA = 0;
+    drv8301.PWMB = 0;
+    drv8301.PWMC = 0;
     SPI_Init();
-    DRV8301GPIO_Init();
-
-    DRV8301_Enable(&drv8301);
-    DELAY_US(10000);
-
-    DRV8301_Read(&drv8301);
-    DRV8301_Display(drv8301);
-
+    ADC_Init();
     EPWM1_Init(7500);   //150MHz 150 *50 =20khz
     EPWM2_Init(7500);
     EPWM3_Init(7500);
+    DRV8301GPIO_Init();
 
-    EPwm1A_SetCompare(0);
-    EPwm1B_SetCompare(0);
-    EPwm2A_SetCompare(0);
-    EPwm2B_SetCompare(0);
-    EPwm3A_SetCompare(0);
-    EPwm3B_SetCompare(0);
+    DRV8301_PWMOff(&drv8301);
+    DRV8301_Enable(&drv8301);
+    DELAY_US(10000);    //wait 5~10mS
+    DRV8301_Read(&drv8301);
+    DRV8301_Display(drv8301);
+
 
     return &drv8301;
 }
@@ -37,35 +33,42 @@ struct struct_DRV8301* DRV8301_Init(void){
 
 void DRV8301_menu(void){
     OLED_ShowString(43, 0, "DRV8301", 1);
-    OLED_ShowString(0, 8, "Device ID:", 1);
-    OLED_ShowString(0, 16, "EN_BUCK:", 1);
-    OLED_ShowString(0, 24, "EN_GATE:", 1);
-    OLED_ShowString(0, 32, "DC_CAL:", 1);
+    OLED_ShowString(0, 1*8, "Device ID:", 1);
+    OLED_ShowString(0, 2*8, "EN_GATE:", 1); //8*6
+    OLED_ShowString(68, 2*8, "DC_CAL:", 1); //7*6
+
+    OLED_ShowString(0, 3*8, "HELLA:", 1);   //6*6
+    OLED_ShowString(64, 3*8, "HELLB:", 1);   //6*6
+    OLED_ShowString(0, 4*8, "HELLC:", 1);   //6*6
+    OLED_ShowString(0, 5*8, "SO1:", 1);     //4*6
+    OLED_ShowString(64, 5*8, "SO2:", 1);     //4*6
 }
 
 void DRV8301_Display(struct struct_DRV8301 temp){
     OLED_Clear();
     DRV8301_menu();
 
-    if(temp.device_id == 0)
+    if(temp.device_id == 0 || temp.device_id == 0xf)
         OLED_ShowString(0, 8, "Disconnect!", 1);
     else
         OLED_ShowInt(60, 8, temp.device_id, 1);
 
     if(temp.en_gate==1)
-        OLED_ShowString(48, 24, "On ", 1);
+        OLED_ShowString(8*6, 2*8, "On ", 1);
     else
-        OLED_ShowString(48, 24, "off", 1);
+        OLED_ShowString(8*6, 2*8, "off", 1);
 
     if(temp.dc_cal==1)
-        OLED_ShowString(42, 32, "On ", 1);
+        OLED_ShowString(7*6+68, 2*8, "On ", 1);
     else
-        OLED_ShowString(42, 32, "off", 1);
+        OLED_ShowString(7*6+68, 2*8, "off", 1);
 
-    OLED_ShowHexfix(20, 40, temp.Reg0, 4, 1);
-    OLED_ShowHexfix(84, 40, temp.Reg1, 4, 1);
-    OLED_ShowHexfix(20, 48, temp.Reg2, 4, 1);
-    OLED_ShowHexfix(84, 48, temp.Reg3, 4, 1);
+    OLED_ShowInt(6*6, 3*8, temp.hella, 1);
+    OLED_ShowInt(6*6+64, 3*8, temp.hellb, 1);
+    OLED_ShowInt(6*6, 4*8, temp.hellc, 1);
+    OLED_ShowInt(4*6, 5*8, temp.so1, 1);
+    OLED_ShowInt(4*6+64, 5*8, temp.so2, 1);
+
     OLED_Refresh();
 }
 
@@ -77,27 +80,37 @@ void DRV8301_Read(struct struct_DRV8301* temp){
     temp->Reg3 = SPIA_SendReciveData(0x9800); //read register:0b11
     //temp->Reg0 = SPIA_SendReciveData(0x0000); //
 
-    /*
+
+    //Register 0
+    temp->fetlc_oc      = (temp->Reg0 & 0b1);   //D0
+    temp->fethc_oc      = (temp->Reg0 & 0b10) >> 1;   //D1
+    temp->fetlb_oc      = (temp->Reg0 & 0b100) >> 2;   //D2
+    temp->fethb_oc      = (temp->Reg0 & 0b1000) >> 3;   //D3
+    temp->fetlc_oc      = (temp->Reg0 & 0b10000) >> 4;   //D4
+    temp->fethc_oc      = (temp->Reg0 & 0b100000) >> 5;   //D5
+    temp->otw           = (temp->Reg0 & 0b1000000) >> 6;   //D6
+    temp->otsd          = (temp->Reg0 & 0b10000000) >> 7;   //D7
+    temp->pvdd_uv       = (temp->Reg0 & 0b100000000) >> 8;   //D8
+    temp->gvdd_uv       = (temp->Reg0 & 0b1000000000) >> 9;   //D9
+    temp->fault         = (temp->Reg0 & 0b10000000000) >> 10;   //D10
+
+    //Register 1
+    temp->device_id     = (temp->Reg1 & 0b1111);   //D0 D1 D2 D3
+    temp->gvdd_ov       = (temp->Reg1 & 0b10000000) >> 7;  //D7
+
     //Register 2
-    distemp->gate_current=tempdata[2]&0x3;  //D0 D1
-    tempdata[2] = tempdata[2] >>3;
-    distemp->pwm_mode = tempdata[2]&0x01;   //D3
-    tempdata[2] = tempdata[2] >>1;
-    distemp->ocp_mode = tempdata[2]&0x03;   //D4 D5
-    tempdata[2] = tempdata[2] >>2;
-    distemp->adj_set = tempdata[2]&0x1f;    //D6 D7 D8 D9 D10
+    temp->gate_current  = (temp->Reg2 & 0b11);  //D0 D1
+    temp->pwm_mode      = (temp->Reg2 & 0b1000) >> 3;   //D3
+    temp->ocp_mode      = (temp->Reg2 & 0b110000) >> 4;   //D4 D5
+    temp->adj_set       = (temp->Reg2 & 0b11111000000) >> 6;    //D6 D7 D8 D9 D10
 
     //Register 3
-    distemp->octw_mode=tempdata[3]&0x3;  //D0 D1
-    tempdata[3] = tempdata[3] >>2;
-    distemp->gain = tempdata[3]&0x03;   //D2 D3
-    tempdata[3] = tempdata[3] >>2;
-    distemp->dc_cal_ch1 = tempdata[3]&0x01;   //D4
-    tempdata[3] = tempdata[3] >>1;
-    distemp->dc_cal_ch2 = tempdata[3]&0x01;   //D5
-    tempdata[3] = tempdata[3] >>1;
-    distemp->oc_toff = tempdata[3]&0x01;    //D6
-    */
+    temp->octw_mode     = (temp->Reg3 & 0b11);  //D0 D1
+    temp->gain          = (temp->Reg3 & 0b1100) >> 2;   //D2 D3
+    temp->dc_cal_ch1    = (temp->Reg3 & 0b10000) >> 4;   //D4
+    temp->dc_cal_ch2    = (temp->Reg3 & 0b100000) >> 5;   //D5
+    temp->oc_toff       = (temp->Reg3 & 0b1000000) >> 6;    //D6
+
 }
 
 void DRV8301GPIO_Init(void){
@@ -129,37 +142,110 @@ void DRV8301GPIO_Init(void){
 
 }
 
-void DRV8301_Contr(struct struct_DRV8301 temp){
-    EPwm1B_SetCompare(3000);
-    EPwm1A_SetCompare(3000);
-    EPwm2B_SetCompare(5000);
-    EPwm2A_SetCompare(5000);
-    EPwm3B_SetCompare(2000);
-    EPwm3A_SetCompare(2000);
+void DRV8301_PWMSet(struct struct_DRV8301 temp){
+
+    //limit max Duty from 5% to 95%.
+
+    //PWMA
+    if(temp.PWMA>(75*95))      //7500*0.95,  7500*0.05 avoid to calculate float
+        temp.PWMA = 75*95;
+    else if(temp.PWMA ==0)
+        temp.PWMA = 0;
+    else if(temp.PWMA <(75*5))
+        temp.PWMA = 75*5;
+    if(temp.PWMA ==0){
+        PWM_HA(temp.PWMA);
+        PWM_LA(7500-temp.PWMA);
+    }
+    else{
+        PWM_HA(temp.PWMA);
+        PWM_LA(temp.PWMA);
+    }
+
+    ///PWMB
+    if(temp.PWMB>(75*95))
+        temp.PWMB = 75*95;
+    else if(temp.PWMB ==0)
+        temp.PWMB = 0;
+    else if(temp.PWMB <(75*5))
+        temp.PWMB = 75*5;
+    if(temp.PWMB ==0){
+        PWM_HA(temp.PWMB);
+        PWM_LA(7500-temp.PWMB);
+    }
+    else{
+        PWM_HA(temp.PWMB);
+        PWM_LA(temp.PWMB);
+    }
+
+    //PWMC
+    if(temp.PWMC>(75*95))
+        temp.PWMC = 75*95;
+    else if(temp.PWMC ==0)
+        temp.PWMC = 0;
+    else if(temp.PWMC <(75*5))
+        temp.PWMC = 75*5;
+    if(temp.PWMC ==0){
+        PWM_HA(temp.PWMC);
+        PWM_LA(7500-temp.PWMC);
+    }
+    else{
+        PWM_HA(temp.PWMC);
+        PWM_LA(temp.PWMC);
+    }
+
+
+}
+
+void DRV8301_PWMOff(struct struct_DRV8301* temp){
+    PWM_HA(0);
+    PWM_LA(7500);
+    PWM_HB(0);
+    PWM_LB(7500);
+    PWM_HC(0);
+    PWM_LC(7500);
+
+    temp->PWMA = temp->PWMB = temp->PWMC =0;
 }
 
 void DRV8301_Enable(struct struct_DRV8301* temp){
     EN_GATE_H;
     temp->en_gate=1;
-    DRV8301_Display(*temp);
 }
 void DRV8301_Disable(struct struct_DRV8301* temp){
     EN_GATE_L;
     temp->en_gate=0;
-    DRV8301_Display(*temp);
 }
 
-void DRV8301_SenseOp(struct struct_DRV8301* temp){
+void DRV8301_ENSense(struct struct_DRV8301* temp){
     DC_CAL_L;
     temp->dc_cal=0;
 }
-void DRV8301_SenseCal(struct struct_DRV8301* temp){
+void DRV8301_DISSense(struct struct_DRV8301* temp){
     DC_CAL_H;
     temp->dc_cal=1;
 }
 
-void DRV8301_Check(struct struct_DRV8301* temp){
+void DRV8301_SenseGet(struct struct_DRV8301* temp){
+    temp->so1 = Read_ADCValueResult0();
+    temp->so2 = Read_ADCValueResult1();
+    temp->hellc = Read_ADCValueResult2();
+    temp->hellb = Read_ADCValueResult3();
+    temp->hella = Read_ADCValueResult4();
+}
+
+U8 DRV8301_Check(struct struct_DRV8301* temp){
     temp->pwrgd = PWRGD_I;
     temp->nfault = NFAULT_I;
     temp->noctw = NOCTW_I;
+
+    if(temp->pwrgd==0 || temp->nfault==0 || temp->noctw==0)
+        return 1;
+    return 0;
+}
+
+void DRV8301_SixStep(struct struct_DRV8301* temp){
+    DRV8301_SenseGet(temp);
+   // temp->PWMA =
+
 }

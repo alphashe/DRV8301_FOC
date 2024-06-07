@@ -14,18 +14,21 @@ void ADC_Init(void){
 
     InitAdc();  // provide by TI
 
+  //  AdcRegs.ADCTRL3.all = 0x00E0;
+
     AdcRegs.ADCTRL1.bit.ACQ_PS = 0x0F; // sequential sampling
     AdcRegs.ADCTRL3.bit.ADCCLKPS = 1; // 25Mhz no frequency division
     AdcRegs.ADCTRL1.bit.SEQ_CASC = 1; // 1:  Cascaded sequencer mode    0:double sort mode
     AdcRegs.ADCTRL3.bit.SMODE_SEL = 0;// 1:Synchronous sampling     0:sequential sampling
     AdcRegs.ADCCHSELSEQ1.bit.CONV00 = 0x0; // A0 as the sample channel  save data to results0
     AdcRegs.ADCCHSELSEQ1.bit.CONV01 = 0x1; // A1 as the sample channel  save data to results1
-    AdcRegs.ADCCHSELSEQ1.bit.CONV02 = 0x2; // A0 as the sample channel  save data to results0
-    AdcRegs.ADCCHSELSEQ1.bit.CONV03 = 0x3; // A1 as the sample channel  save data to results1
-    //AdcRegs.ADCCHSELSEQ3.bit.CONV08 = 0x03; // B0 as the sample channel save data to results5
+    AdcRegs.ADCCHSELSEQ1.bit.CONV02 = 0x2; // A2 as the sample channel  save data to results2
+    AdcRegs.ADCCHSELSEQ1.bit.CONV03 = 0x3; // A3 as the sample channel  save data to results3
+    //AdcRegs.ADCCHSELSEQ2.bit.CONV04 = 0x4; // A4 as the sample channel  save data to results4
+    AdcRegs.ADCCHSELSEQ3.bit.CONV08 = 0x04; // B0 as the sample channel save data to results5
     //AdcRegs.ADCCHSELSEQ1.bit.CONV02 = 0x02; // A2 as the sample channel
     AdcRegs.ADCTRL1.bit.CONT_RUN = 1; // continuous sampling
-    AdcRegs.ADCMAXCONV.bit.MAX_CONV1 = 0x4;  // max sample channel, CONV05 have used , so it should be 5. but actully, only two channel working. Cascaded mode max 15, double sort max 7;
+    AdcRegs.ADCMAXCONV.bit.MAX_CONV1 = 0x8;  // max sample channel, CONV05 have used , so it should be 5. but actully, only two channel working. Cascaded mode max 15, double sort max 7;
     //AdcRegs.ADCMAXCONV.bit.MAX_CONV2 = 0xf;  // max sample channel, case only A0 is used , so 0x0;
     AdcRegs.ADCTRL2.all = 0x2000;   //software trigger
 

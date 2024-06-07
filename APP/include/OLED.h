@@ -30,7 +30,7 @@
 
 #define OLED_CMD    0 // write command
 #define OLED_DATA   1 //write data
-#define IIC_Delay   DELAY_US(2)
+#define IIC_Delay   DELAY_US(1)
 
 void OLED_Init(void);
 void OLED_WR_Byte(Uint16 dat,Uint16 mode);
@@ -39,6 +39,7 @@ void I2C_Stop(void);
 void Send_Byte(Uint16 dat);
 void I2C_WaitAck(void);
 void OLED_Clear(void);
+void OLED_Clear_fix(U8 x1, U8 x2, U8 y1, U8 y2);
 void OLED_Refresh(void);
 void OLED_Refresh_fix(Uint16 x1, Uint16 x2, Uint16 y);
 void OLED_DrawPoint(Uint16 x,Uint16 y,Uint16 t);
