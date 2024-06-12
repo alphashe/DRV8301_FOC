@@ -87,17 +87,22 @@ struct struct_DRV8301{
     Uint16 PWMC;
 
     //Sense
-    Uint16 hella;
-    Uint16 hellb;
-    Uint16 hellc;
-    Uint16 so1;
-    Uint16 so2;
+    float hella;
+    float hellb;
+    float hellc;
+    Uint16 hell;
+    float Ia;
+    float Ib;
+    float Ic;
 
 };
 
-
+struct Contrl{
+    float Ialpha;
+    float Ibeta;
+};
 /////funciton
-struct struct_DRV8301* DRV8301_Init(void);
+void DRV8301_Init(struct struct_DRV8301* temp);
 void DRV8301GPIO_Init(void);
 void DRV8301_menu(void);
 void DRV8301_Display(struct struct_DRV8301 temp);
@@ -111,6 +116,8 @@ void DRV8301_DISSense(struct struct_DRV8301* temp);
 void DRV8301_SenseGet(struct struct_DRV8301* temp);
 void DRV8301_SixStep(struct struct_DRV8301* temp);
 
+void DRV8301_Contrl(struct struct_DRV8301* temp, struct Contrl* ctr);
+void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr);
 //if error, return 1. else return 0
 U8 DRV8301_Check(struct struct_DRV8301* temp);
 

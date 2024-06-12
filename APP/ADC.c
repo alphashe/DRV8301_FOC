@@ -24,11 +24,11 @@ void ADC_Init(void){
     AdcRegs.ADCCHSELSEQ1.bit.CONV01 = 0x1; // A1 as the sample channel  save data to results1
     AdcRegs.ADCCHSELSEQ1.bit.CONV02 = 0x2; // A2 as the sample channel  save data to results2
     AdcRegs.ADCCHSELSEQ1.bit.CONV03 = 0x3; // A3 as the sample channel  save data to results3
-    //AdcRegs.ADCCHSELSEQ2.bit.CONV04 = 0x4; // A4 as the sample channel  save data to results4
-    AdcRegs.ADCCHSELSEQ3.bit.CONV08 = 0x04; // B0 as the sample channel save data to results5
+    AdcRegs.ADCCHSELSEQ2.bit.CONV04 = 0x4; // A4 as the sample channel  save data to results4
+    //AdcRegs.ADCCHSELSEQ3.bit.CONV08 = 0x04; // B0 as the sample channel save data to results5
     //AdcRegs.ADCCHSELSEQ1.bit.CONV02 = 0x02; // A2 as the sample channel
     AdcRegs.ADCTRL1.bit.CONT_RUN = 1; // continuous sampling
-    AdcRegs.ADCMAXCONV.bit.MAX_CONV1 = 0x8;  // max sample channel, CONV05 have used , so it should be 5. but actully, only two channel working. Cascaded mode max 15, double sort max 7;
+    AdcRegs.ADCMAXCONV.bit.MAX_CONV1 = 0x4;  // max sample channel, CONV05 have used , so it should be 5. but actully, only two channel working. Cascaded mode max 15, double sort max 7;
     //AdcRegs.ADCMAXCONV.bit.MAX_CONV2 = 0xf;  // max sample channel, case only A0 is used , so 0x0;
     AdcRegs.ADCTRL2.all = 0x2000;   //software trigger
 

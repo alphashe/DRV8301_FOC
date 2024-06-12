@@ -7,11 +7,11 @@
 
 #include <DRV8301.h>
 
-struct struct_DRV8301* DRV8301_Init(void){
-    static struct struct_DRV8301 drv8301;
-    drv8301.PWMA = 0;
-    drv8301.PWMB = 0;
-    drv8301.PWMC = 0;
+void DRV8301_Init(struct struct_DRV8301* temp){
+    //static struct struct_DRV8301 drv8301;
+    temp->PWMA = 0;
+    temp->PWMB = 0;
+    temp->PWMC = 0;
     SPI_Init();
     ADC_Init();
     EPWM1_Init(7500);   //150MHz 150 *50 =20khz
@@ -19,14 +19,12 @@ struct struct_DRV8301* DRV8301_Init(void){
     EPWM3_Init(7500);
     DRV8301GPIO_Init();
 
-    DRV8301_PWMOff(&drv8301);
-    DRV8301_Enable(&drv8301);
+    DRV8301_PWMOff(temp);
+    DRV8301_Enable(temp);
     DELAY_US(10000);    //wait 5~10mS
-    DRV8301_Read(&drv8301);
-    DRV8301_Display(drv8301);
+    DRV8301_Read(temp);
+    DRV8301_Display(*temp);
 
-
-    return &drv8301;
 }
 
 
@@ -66,8 +64,7 @@ void DRV8301_Display(struct struct_DRV8301 temp){
     OLED_ShowInt(6*6, 3*8, temp.hella, 1);
     OLED_ShowInt(6*6+64, 3*8, temp.hellb, 1);
     OLED_ShowInt(6*6, 4*8, temp.hellc, 1);
-    OLED_ShowInt(4*6, 5*8, temp.so1, 1);
-    OLED_ShowInt(4*6+64, 5*8, temp.so2, 1);
+
 
     OLED_Refresh();
 }
@@ -145,7 +142,7 @@ void DRV8301GPIO_Init(void){
 void DRV8301_PWMSet(struct struct_DRV8301 temp){
 
     //limit max Duty from 5% to 95%.
-
+    //if duty =0, all pwm shut down
     //PWMA
     if(temp.PWMA>(75*95))      //7500*0.95,  7500*0.05 avoid to calculate float
         temp.PWMA = 75*95;
@@ -227,11 +224,29 @@ void DRV8301_DISSense(struct struct_DRV8301* temp){
 }
 
 void DRV8301_SenseGet(struct struct_DRV8301* temp){
-    temp->so1 = Read_ADCValueResult0();
-    temp->so2 = Read_ADCValueResult1();
-    temp->hellc = Read_ADCValueResult2();
-    temp->hellb = Read_ADCValueResult3();
-    temp->hella = Read_ADCValueResult4();
+    Uint16 so1=0, so2=0;
+    Uint16 a=0, b=0, c=0;
+    so1 = Read_ADCValueResult0();
+    so2 = Read_ADCValueResult1();
+    c = Read_ADCValueResult2();
+    b = Read_ADCValueResult3();
+    a = Read_ADCValueResult4();
+
+    temp->hell = 0;
+    temp->Ib = (so1/4096.0 *3) / 0.08;
+    temp->Ic = (so2/4096.0 *3) / 0.08;
+    temp->Ia = -temp->Ib - temp->Ic;
+    temp->hella = a/4096.0 * 3;
+    temp->hellb = b/4096.0 * 3;
+    temp->hellc = c/4096.0 * 3;
+    if(temp->hella>1)
+        temp->hell = temp->hell | 0b100;
+    if(temp->hellb>1)
+        temp->hell = temp->hell | 0b010;
+    if(temp->hellc>1)
+        temp->hell = temp->hell | 0b001;
+
+
 }
 
 U8 DRV8301_Check(struct struct_DRV8301* temp){
@@ -246,6 +261,42 @@ U8 DRV8301_Check(struct struct_DRV8301* temp){
 
 void DRV8301_SixStep(struct struct_DRV8301* temp){
     DRV8301_SenseGet(temp);
-   // temp->PWMA =
+    //hell:abc
+    if(temp->hell == 001){
+        temp->PWMA = 500;
+        temp->PWMB = 0;
+        temp->PWMC = 3000;
+    }
+
+    if(temp->hell == 010){
+        temp->PWMA = 0;
+        temp->PWMB = 3000;
+        temp->PWMC = 500;
+    }
+
+    if(temp->hell == 011){
+        temp->PWMA = 500;
+        temp->PWMB = 3000;
+        temp->PWMC = 0;
+    }
+
+    if(temp->hell == 100){
+        temp->PWMA = 0;
+        temp->PWMB = 500;
+        temp->PWMC = 3000;
+    }
+    if(temp->hell == 101){
+        temp->PWMA = 0;
+        temp->PWMB = 500;
+        temp->PWMC = 3000;
+    }
+
+    if(temp->hell == 110){
+        temp->PWMA = 3000;
+        temp->PWMB = 0;
+        temp->PWMC = 500;
+    }
+
+    DRV8301_PWMSet(*temp);
 
 }

@@ -25,8 +25,8 @@ void main(void){
     InitSysCtrl();
     //DINT;
     Uint16 fx = 0;
-
-    struct struct_DRV8301 *pdrv8301;
+    struct struct_DRV8301 drv8301;
+    struct struct_DRV8301* pdrv8301 = &drv8301;
 	InitPieCtrl();
 	IER = 0x0000;   //disable all interrupt
 	IFR = 0x0000;   //clear all interrupt flag
@@ -44,10 +44,7 @@ void main(void){
     OLED_Refresh();
 
     DELAY_US(1000000);
-    pdrv8301 = DRV8301_Init();
-   // ADC_Init();
-   // Key_Init();
-   // EXTI1_Init();
+    DRV8301_Init(pdrv8301);
 
 	while(1){
 	    DRV8301_PWMSet(*pdrv8301);
@@ -68,10 +65,11 @@ void main(void){
 	        DRV8301_PWMSet(*pdrv8301);
 	    }
 
-	    DRV8301_SenseGet(pdrv8301);
-	    DRV8301_Display(*pdrv8301);
-	    OLED_ShowInt(121, 6*8, fx, 1);
-	    OLED_Refresh_fix(121, 127, 6);
+	    //DRV8301_SenseGet(pdrv8301);
+	    DRV8301_SixStep(pdrv8301);
+	    //DRV8301_Display(*pdrv8301);
+	    //OLED_ShowInt(121, 6*8, fx, 1);
+	    //OLED_Refresh_fix(121, 127, 6);
 	}
 }
 
