@@ -14,6 +14,7 @@
 #include <SPI.h>
 #include <EPWM.h>
 #include <ADC.h>
+#include <math.h>
 
 #define EN_GATE     GPIO11
 #define DC_CAL      GPIO10
@@ -100,6 +101,8 @@ struct struct_DRV8301{
 struct Contrl{
     float Ialpha;
     float Ibeta;
+    float Id;
+    float Iq;
 };
 /////funciton
 void DRV8301_Init(struct struct_DRV8301* temp);
@@ -114,10 +117,12 @@ void DRV8301_Disable(struct struct_DRV8301* temp);
 void DRV8301_ENSense(struct struct_DRV8301* temp);
 void DRV8301_DISSense(struct struct_DRV8301* temp);
 void DRV8301_SenseGet(struct struct_DRV8301* temp);
-void DRV8301_SixStep(struct struct_DRV8301* temp);
 
-void DRV8301_Contrl(struct struct_DRV8301* temp, struct Contrl* ctr);
+void DRV8301_SixStep(struct struct_DRV8301* temp);
+void DRV8301_SVPWM(struct struct_DRV8301* temp);
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr);
+void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr);
+
 //if error, return 1. else return 0
 U8 DRV8301_Check(struct struct_DRV8301* temp);
 

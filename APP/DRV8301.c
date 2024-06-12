@@ -6,6 +6,7 @@
  */
 
 #include <DRV8301.h>
+float theta=0;
 
 void DRV8301_Init(struct struct_DRV8301* temp){
     //static struct struct_DRV8301 drv8301;
@@ -26,7 +27,6 @@ void DRV8301_Init(struct struct_DRV8301* temp){
     DRV8301_Display(*temp);
 
 }
-
 
 
 void DRV8301_menu(void){
@@ -150,6 +150,7 @@ void DRV8301_PWMSet(struct struct_DRV8301 temp){
         temp.PWMA = 0;
     else if(temp.PWMA <(75*5))
         temp.PWMA = 75*5;
+
     if(temp.PWMA ==0){
         PWM_HA(temp.PWMA);
         PWM_LA(7500-temp.PWMA);
@@ -167,12 +168,12 @@ void DRV8301_PWMSet(struct struct_DRV8301 temp){
     else if(temp.PWMB <(75*5))
         temp.PWMB = 75*5;
     if(temp.PWMB ==0){
-        PWM_HA(temp.PWMB);
-        PWM_LA(7500-temp.PWMB);
+        PWM_HB(temp.PWMB);
+        PWM_LB(7500-temp.PWMB);
     }
     else{
-        PWM_HA(temp.PWMB);
-        PWM_LA(temp.PWMB);
+        PWM_HB(temp.PWMB);
+        PWM_LB(temp.PWMB);
     }
 
     //PWMC
@@ -183,12 +184,12 @@ void DRV8301_PWMSet(struct struct_DRV8301 temp){
     else if(temp.PWMC <(75*5))
         temp.PWMC = 75*5;
     if(temp.PWMC ==0){
-        PWM_HA(temp.PWMC);
-        PWM_LA(7500-temp.PWMC);
+        PWM_HC(temp.PWMC);
+        PWM_LC(7500-temp.PWMC);
     }
     else{
-        PWM_HA(temp.PWMC);
-        PWM_LA(temp.PWMC);
+        PWM_HC(temp.PWMC);
+        PWM_LC(temp.PWMC);
     }
 
 
@@ -261,42 +262,51 @@ U8 DRV8301_Check(struct struct_DRV8301* temp){
 
 void DRV8301_SixStep(struct struct_DRV8301* temp){
     DRV8301_SenseGet(temp);
+
     //hell:abc
-    if(temp->hell == 001){
+    if(temp->hell == 0b001){
         temp->PWMA = 500;
         temp->PWMB = 0;
         temp->PWMC = 3000;
     }
-
-    if(temp->hell == 010){
+    if(temp->hell == 0b010){
         temp->PWMA = 0;
         temp->PWMB = 3000;
         temp->PWMC = 500;
     }
-
-    if(temp->hell == 011){
+    if(temp->hell == 0b011){
         temp->PWMA = 500;
         temp->PWMB = 3000;
         temp->PWMC = 0;
     }
-
-    if(temp->hell == 100){
+    if(temp->hell == 0b100){
         temp->PWMA = 0;
         temp->PWMB = 500;
         temp->PWMC = 3000;
     }
-    if(temp->hell == 101){
+    if(temp->hell == 0b101){
         temp->PWMA = 0;
         temp->PWMB = 500;
         temp->PWMC = 3000;
     }
-
-    if(temp->hell == 110){
+    if(temp->hell == 0b110){
         temp->PWMA = 3000;
         temp->PWMB = 0;
         temp->PWMC = 500;
     }
 
     DRV8301_PWMSet(*temp);
+}
 
+void DRV8301_SVPWM(struct struct_DRV8301* temp){
+	theta
+}
+
+void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr){
+	ctr->Ialpha = temp.Ia - 0.5*temp.Ib - 0.5*temp.Ic;
+	ctr->Ibeta = 0.866*temp.Ib - 0.866*temp.Ic;
+}
+void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr){
+
+	ctr->Id = cos(theta)*ctr->Ialpha + sin(theta)*ctr->Ibeta;
 }

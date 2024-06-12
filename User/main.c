@@ -47,7 +47,7 @@ void main(void){
     DRV8301_Init(pdrv8301);
 
 	while(1){
-	    DRV8301_PWMSet(*pdrv8301);
+	    //DRV8301_PWMSet(*pdrv8301);
 	    //DELAY_US(50*1000);
 
 	   // fx = Scan_PressKey();

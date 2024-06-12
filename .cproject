@@ -36,10 +36,11 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.SILICON_VERSION.193456626" name="Processor version (--silicon_version, -v)" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.SILICON_VERSION" value="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.SILICON_VERSION.28" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.FLOAT_SUPPORT.1008159580" name="Specify floating point support (--float_support)" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.FLOAT_SUPPORT" value="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.FLOAT_SUPPORT.fpu32" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.INCLUDE_PATH.2045521252" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.INCLUDE_PATH" valueType="includePath">
-									<listOptionValue builtIn="false" value="C:\electr\DSP28335\DRV8301_FOC\APP"/>
-									<listOptionValue builtIn="false" value="C:\electr\DSP28335\DRV8301_FOC\APP\include"/>
-									<listOptionValue builtIn="false" value="C:\electr\DSP28335\DRV8301_FOC\DSP2833x_Libraries"/>
+									<listOptionValue builtIn="false" value="D:\electron\28335\software\learning\DRV8301_FOC\APP"/>
+									<listOptionValue builtIn="false" value="D:\electron\28335\software\learning\DRV8301_FOC\APP\include"/>
+									<listOptionValue builtIn="false" value="D:\electron\28335\software\learning\DRV8301_FOC\DSP2833x_Libraries"/>
 									<listOptionValue builtIn="false" value="C:\electr\ccs10\ccs\tools\compiler\ti-cgt-c2000_20.2.1.LTS\include"/>
+									<listOptionValue builtIn="false" value="D:\electron\CCS10\ccs\tools\compiler\ti-cgt-c2000_20.2.1.LTS\include"/>
 									<listOptionValue builtIn="false" value="C:\ti\ccs1230\ccs\tools\compiler\ti-cgt-c2000_22.6.0.LTS\include"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.DEBUGGING_MODEL.140040860" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
@@ -60,9 +61,12 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_20.2.linkerID.OUTPUT_FILE.1932267848" name="Specify output file name (--output_file, -o)" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.linkerID.OUTPUT_FILE" value="${ProjName}.out" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_20.2.linkerID.LIBRARY.470285953" name="Include library file or command file as input (--library, -l)" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.linkerID.LIBRARY" valueType="libs">
 									<listOptionValue builtIn="false" value="libc.a"/>
+									<listOptionValue builtIn="false" value="D:\electron\28335\software\learning\DRV8301_FOC\DSP2833x_Libraries\IQmath.lib"/>
+									<listOptionValue builtIn="false" value="&quot;IQmath.lib&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_20.2.linkerID.SEARCH_PATH.287401646" name="Add &lt;dir&gt; to library search path (--search_path, -i)" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.linkerID.SEARCH_PATH" valueType="libPaths">
 									<listOptionValue builtIn="false" value="${CG_TOOL_ROOT}/lib"/>
+									<listOptionValue builtIn="false" value="D:\electron\28335\software\learning\DRV8301_FOC\DSP2833x_Libraries"/>
 									<listOptionValue builtIn="false" value="C:\electr\DSP28335\LED\APP"/>
 									<listOptionValue builtIn="false" value="C:\electr\DSP28335\LED\APP\include"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_ROOT}/include"/>
