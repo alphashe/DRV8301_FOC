@@ -266,32 +266,32 @@ void DRV8301_SixStep(struct struct_DRV8301* temp){
     //hell:abc
     if(temp->hell == 0b001){
         temp->PWMA = 500;
-        temp->PWMB = 0;
+        temp->PWMB = 500;
         temp->PWMC = 3000;
     }
     if(temp->hell == 0b010){
-        temp->PWMA = 0;
+        temp->PWMA = 500;
         temp->PWMB = 3000;
         temp->PWMC = 500;
     }
     if(temp->hell == 0b011){
         temp->PWMA = 500;
         temp->PWMB = 3000;
-        temp->PWMC = 0;
+        temp->PWMC = 500;
     }
     if(temp->hell == 0b100){
-        temp->PWMA = 0;
+        temp->PWMA = 500;
         temp->PWMB = 500;
         temp->PWMC = 3000;
     }
     if(temp->hell == 0b101){
-        temp->PWMA = 0;
+        temp->PWMA = 500;
         temp->PWMB = 500;
         temp->PWMC = 3000;
     }
     if(temp->hell == 0b110){
         temp->PWMA = 3000;
-        temp->PWMB = 0;
+        temp->PWMB = 500;
         temp->PWMC = 500;
     }
 
@@ -299,7 +299,15 @@ void DRV8301_SixStep(struct struct_DRV8301* temp){
 }
 
 void DRV8301_SVPWM(struct struct_DRV8301* temp){
-	theta
+	//theta
+    struct Contrl svpwm;
+    svpwm.Ialpha = cos(theta) * 0.2;
+    svpwm.Ibeta = sin(theta) * 0.2;
+    temp->PWMA = (svpwm.Ialpha) * 3750 + 3750;
+    temp->PWMB = (-0.5*svpwm.Ialpha + 0.866*svpwm.Ibeta) * 3750 + 3750;
+    temp->PWMC = (-0.5*svpwm.Ialpha - 0.866*svpwm.Ibeta) * 3750 + 3750;
+
+    DRV8301_PWMSet(*temp);
 }
 
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr){

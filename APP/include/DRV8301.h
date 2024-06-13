@@ -38,6 +38,8 @@
 #define PWM_HC(D)   EPwm1A_SetCompare(D);
 #define PWM_LC(D)   EPwm1B_SetCompare(D);
 
+extern float theta;
+
 struct struct_DRV8301{
 
     //R0

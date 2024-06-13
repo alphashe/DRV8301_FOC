@@ -9,7 +9,7 @@
 #define APP_INCLUDE_GLOBAL_H_
 
 #define mainCLK 150
-
+#define PI 3.14159
 
 
 ////////////////GPIO/////////////

@@ -24,7 +24,7 @@ void main(void){
 
     InitSysCtrl();
     //DINT;
-    Uint16 fx = 0;
+    float fx = 0;
     struct struct_DRV8301 drv8301;
     struct struct_DRV8301* pdrv8301 = &drv8301;
 	InitPieCtrl();
@@ -49,8 +49,13 @@ void main(void){
 	while(1){
 	    //DRV8301_PWMSet(*pdrv8301);
 	    //DELAY_US(50*1000);
-
+	    //DELAY_US(1);
+	    DRV8301_SVPWM(pdrv8301);
+	    theta += PI/36000;
+	    if(theta > 2*PI)
+	        theta=0;
 	   // fx = Scan_PressKey();
+	    /*
 	    if(fx == 1){
 	        pdrv8301->PWMA = 6000;
 	        pdrv8301->PWMB = 500;
@@ -63,10 +68,10 @@ void main(void){
 	        pdrv8301->PWMB = 6000;
 	        pdrv8301->PWMC = 500;
 	        DRV8301_PWMSet(*pdrv8301);
-	    }
+	    }*/
 
 	    //DRV8301_SenseGet(pdrv8301);
-	    DRV8301_SixStep(pdrv8301);
+	    //DRV8301_SixStep(pdrv8301);
 	    //DRV8301_Display(*pdrv8301);
 	    //OLED_ShowInt(121, 6*8, fx, 1);
 	    //OLED_Refresh_fix(121, 127, 6);
