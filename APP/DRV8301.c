@@ -141,9 +141,26 @@ void DRV8301GPIO_Init(void){
 
 void DRV8301_PWMSet(struct struct_DRV8301 temp){
 
+    //limit max Duty max 95%.
+    if(temp.PWMA>(75*95))
+        temp.PWMA = 75*95;
+    if(temp.PWMB>(75*95))
+        temp.PWMB = 75*95;
+    if(temp.PWMC>(75*95))
+        temp.PWMC = 75*95;
+
+    PWM_HA(temp.PWMA);
+    PWM_LA(temp.PWMA);
+    PWM_HB(temp.PWMB);
+    PWM_LB(temp.PWMB);
+    PWM_HC(temp.PWMC);
+    PWM_LC(temp.PWMC);
+
+//--------------------------------------------------------------------------
     //limit max Duty from 5% to 95%.
     //if duty =0, all pwm shut down
     //PWMA
+    /*
     if(temp.PWMA>(75*95))      //7500*0.95,  7500*0.05 avoid to calculate float
         temp.PWMA = 75*95;
     else if(temp.PWMA ==0)
@@ -191,7 +208,7 @@ void DRV8301_PWMSet(struct struct_DRV8301 temp){
         PWM_HC(temp.PWMC);
         PWM_LC(temp.PWMC);
     }
-
+    */
 
 }
 
@@ -224,6 +241,7 @@ void DRV8301_DISSense(struct struct_DRV8301* temp){
     temp->dc_cal=1;
 }
 
+//get Ia,Ib,Ic, and hella,b,c. translate hell to code "abc"
 void DRV8301_SenseGet(struct struct_DRV8301* temp){
     Uint16 so1=0, so2=0;
     Uint16 a=0, b=0, c=0;
@@ -246,10 +264,9 @@ void DRV8301_SenseGet(struct struct_DRV8301* temp){
         temp->hell = temp->hell | 0b010;
     if(temp->hellc>1)
         temp->hell = temp->hell | 0b001;
-
-
 }
 
+//will return 1, if something wrong. return 0, when normal operation
 U8 DRV8301_Check(struct struct_DRV8301* temp){
     temp->pwrgd = PWRGD_I;
     temp->nfault = NFAULT_I;
@@ -262,7 +279,6 @@ U8 DRV8301_Check(struct struct_DRV8301* temp){
 
 void DRV8301_SixStep(struct struct_DRV8301* temp){
     DRV8301_SenseGet(temp);
-
     //hell:abc
     if(temp->hell == 0b001){
         temp->PWMA = 500;
@@ -298,7 +314,7 @@ void DRV8301_SixStep(struct struct_DRV8301* temp){
     DRV8301_PWMSet(*temp);
 }
 
-void DRV8301_SVPWM(struct struct_DRV8301* temp){
+void DRV8301_SPWM(struct struct_DRV8301* temp){
 	//theta
     struct Contrl svpwm;
     svpwm.Ialpha = cos(theta) * 0.2;
@@ -310,6 +326,17 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     DRV8301_PWMSet(*temp);
 }
 
+void DRV8301_SVPWM(struct struct_DRV8301* temp){
+    struct Contrl ctr;
+    ctr.A = 0.3;
+    ctr.Ialpha = cos(theta) * ctr.A;
+    ctr.Ibeta = sin(theta) * ctr.A;
+
+    //sector 1
+    if(theta >=0 && theta < PI/3){
+
+    }
+}
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr){
 	ctr->Ialpha = temp.Ia - 0.5*temp.Ib - 0.5*temp.Ic;
 	ctr->Ibeta = 0.866*temp.Ib - 0.866*temp.Ic;

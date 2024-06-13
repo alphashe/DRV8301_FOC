@@ -41,7 +41,6 @@
 extern float theta;
 
 struct struct_DRV8301{
-
     //R0
     Uint16 Reg0;
     U8 fault;
@@ -55,7 +54,6 @@ struct struct_DRV8301{
     U8 fetlb_oc;
     U8 fethc_oc;
     U8 fetlc_oc;
-
 
     //R1
     Uint16 Reg1;
@@ -105,8 +103,11 @@ struct Contrl{
     float Ibeta;
     float Id;
     float Iq;
+
+    float A;
 };
-/////funciton
+
+/////////////////////////funciton/////////////////////////////////////////
 void DRV8301_Init(struct struct_DRV8301* temp);
 void DRV8301GPIO_Init(void);
 void DRV8301_menu(void);
@@ -121,6 +122,7 @@ void DRV8301_DISSense(struct struct_DRV8301* temp);
 void DRV8301_SenseGet(struct struct_DRV8301* temp);
 
 void DRV8301_SixStep(struct struct_DRV8301* temp);
+void DRV8301_SPWM(struct struct_DRV8301* temp);
 void DRV8301_SVPWM(struct struct_DRV8301* temp);
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr);
 void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr);
