@@ -45,16 +45,18 @@ void main(void){
 
     DELAY_US(1000000);
     DRV8301_Init(pdrv8301);
-
+    theta = 0;
 	while(1){
 	    //DRV8301_PWMSet(*pdrv8301);
 	    //DELAY_US(50*1000);
 	    //DELAY_US(1);
 	    DRV8301_SVPWM(pdrv8301);
-	    theta += PI/36000;
+	    theta += PI/3000;
 	    if(theta > 2*PI)
 	        theta=0;
-	   // fx = Scan_PressKey();
+	    //fx = Scan_PressKey();
+	    //if(fx==1)
+	       // theta +=PI/3;
 	    /*
 	    if(fx == 1){
 	        pdrv8301->PWMA = 6000;
@@ -69,12 +71,12 @@ void main(void){
 	        pdrv8301->PWMC = 500;
 	        DRV8301_PWMSet(*pdrv8301);
 	    }*/
-
+	   // OLED_ShowInt(6*6, 3*8, theta, 1);
 	    //DRV8301_SenseGet(pdrv8301);
 	    //DRV8301_SixStep(pdrv8301);
 	    //DRV8301_Display(*pdrv8301);
 	    //OLED_ShowInt(121, 6*8, fx, 1);
-	    //OLED_Refresh_fix(121, 127, 6);
+	    //OLED_Refresh_fix(6*6, , 6);
 	}
 }
 

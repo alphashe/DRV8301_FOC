@@ -7,6 +7,7 @@
 
 #include <DRV8301.h>
 float theta=0;
+_iq IQtheta=0;
 
 void DRV8301_Init(struct struct_DRV8301* temp){
     //static struct struct_DRV8301 drv8301;
@@ -328,14 +329,94 @@ void DRV8301_SPWM(struct struct_DRV8301* temp){
 
 void DRV8301_SVPWM(struct struct_DRV8301* temp){
     struct Contrl ctr;
-    ctr.A = 0.3;
+
+    float U1, U2, U3;
+    float T[7] = {0};
+    ctr.A = (0.2);
     ctr.Ialpha = cos(theta) * ctr.A;
     ctr.Ibeta = sin(theta) * ctr.A;
+    U1 = ctr.Ibeta;                                 //0~1
+    U2 = 0.5 * ctr.Ibeta - 0.866 * ctr.Ialpha;      //0~1
+    U3 = 0.5 * ctr.Ibeta + 0.866 * ctr.Ialpha;      //0~1
 
+    /////////////////////IQmath/////////////////////
+    _iq IQU1, IQU2, IQU3;
+    _iq IQT[7] = {_IQ(0)};
+    ctr.IQA = _IQ(0.2);
+    ctr.IQIalpha = _IQmpy(_IQcos(IQtheta), ctr.IQA);
+    ctr.IQIbeta = _IQmpy(_IQsin(IQtheta), ctr.IQA);
+    IQU1 = ctr.IQIbeta;
+    IQU2 = _IQmpy(_IQ(0.5), ctr.IQIbeta) - _IQmpy(-IQ(0.866), ctr.IQIalpha);
+    IQU2 = _IQmpy(_IQ(0.5), ctr.IQIbeta) + _IQmpy(-IQ(0.866), ctr.IQIalpha);
+
+
+
+
+
+    /*    float
     //sector 1
     if(theta >=0 && theta < PI/3){
-
+        T[4] = -U2;     //100
+        T[6] = U1;      //110
+        T[0] = (1-T[6] - T[4])/2;   //000 & 111
+        temp->PWMA = (Uint16)((T[6]+T[4]+T[0]) * 7500.0);
+        temp->PWMB = (Uint16)((T[6]+T[0]) * 7500.0);
+        temp->PWMC = (Uint16)((T[0]) * 7500.0);
     }
+
+    //sector 2
+    if(theta >=PI/3 && theta < 2*PI/3){
+        T[2] = U2;     //010
+        T[6] = U3;     //110
+        T[0] = (1-T[2] - T[6])/2;   //000 & 111
+        temp->PWMA = (Uint16)((T[6]+T[0]) * 7500.0);
+        temp->PWMB = (Uint16)((T[2]+T[6]+T[0]) * 7500.0);
+        temp->PWMC = (Uint16)((T[0]) * 7500.0);
+    }
+
+    //sector 3
+    if(theta >=2*PI/3 && theta < PI){
+        T[3] = -U3;     //011
+        T[2] = U1;      //010
+        T[0] = (1-T[3] - T[2])/2;   //000 & 111
+        temp->PWMA = (Uint16)((T[0]) * 7500.0);
+        temp->PWMB = (Uint16)((T[3]+T[2]+T[0]) * 7500.0);
+        temp->PWMC = (Uint16)((T[3]+T[0]) * 7500.0);
+    }
+
+    //sector 4
+    if(theta >=PI && theta < 4*PI/3){
+        T[1] = -U1;      //001
+        T[3] = U2;       //011
+        T[0] = (1-T[1] - T[3])/2;   //000 & 111
+        temp->PWMA = (Uint16)((T[0]) * 7500.0);
+        temp->PWMB = (Uint16)((T[3]+T[0]) * 7500.0);
+        temp->PWMC = (Uint16)((T[1]+T[3]+T[0]) * 7500.0);
+    }
+
+    //sector 5
+    if(theta >=4*PI/3 && theta < 5*PI/3){
+        T[5] = -U2;      //101
+        T[1] = -U3;       //001
+        T[0] = (1-T[5] - T[1])/2;   //000 & 111
+        temp->PWMA = (Uint16)((T[5]+T[0]) * 7500.0);
+        temp->PWMB = (Uint16)((T[0]) * 7500.0);
+        temp->PWMC = (Uint16)((T[5]+T[1]+T[0]) * 7500.0);
+    }
+
+
+    //sector 6
+    if(theta >=5*PI/3 && theta < 2*PI){
+        T[4] = U3;      //100
+        T[5] = -U1;       //101
+        T[0] = (1-T[4] - T[5])/2;   //000 & 111
+        temp->PWMA = (Uint16)((T[4]+T[5]+T[0]) * 7500.0);
+        temp->PWMB = (Uint16)((T[0]) * 7500.0);
+        temp->PWMC = (Uint16)((T[5]+T[0]) * 7500.0);
+    }
+    */
+
+    DRV8301_PWMSet(*temp);
 }
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr){
 	ctr->Ialpha = temp.Ia - 0.5*temp.Ib - 0.5*temp.Ic;

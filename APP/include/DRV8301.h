@@ -14,6 +14,7 @@
 #include <SPI.h>
 #include <EPWM.h>
 #include <ADC.h>
+#include <IQmathLib.h>
 #include <math.h>
 
 #define EN_GATE     GPIO11
@@ -39,6 +40,7 @@
 #define PWM_LC(D)   EPwm1B_SetCompare(D);
 
 extern float theta;
+extern _iq IQtheta;
 
 struct struct_DRV8301{
     //R0
@@ -103,8 +105,13 @@ struct Contrl{
     float Ibeta;
     float Id;
     float Iq;
+    _iq IQIalpha;
+    _iq IQIbeta;
+    _iq IQId;
+    _iq IQIq;
 
     float A;
+    _iq IQA;
 };
 
 /////////////////////////funciton/////////////////////////////////////////
