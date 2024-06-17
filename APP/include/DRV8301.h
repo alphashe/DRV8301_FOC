@@ -15,6 +15,7 @@
 #include <EPWM.h>
 #include <ADC.h>
 #include <math.h>
+#include "IQmathLib.h"
 
 #define EN_GATE     GPIO11
 #define DC_CAL      GPIO10

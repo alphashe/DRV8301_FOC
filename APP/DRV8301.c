@@ -338,10 +338,13 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     U2 = 0.5 * ctr.Ibeta - 0.866 * ctr.Ialpha;      //0~1
     U3 = 0.5 * ctr.Ibeta + 0.866 * ctr.Ialpha;      //0~1
 
+    _iq a, b, c;
+    a = _IQ(2.1);
+    b = _IQcos(a);
+    c = _IQmpy(a, b);
 
 
-
-    /*    float
+    //    float
     //sector 1
     if(theta >=0 && theta < PI/3){
         T[4] = -U2;     //100
@@ -402,7 +405,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         temp->PWMB = (Uint16)((T[0]) * 7500.0);
         temp->PWMC = (Uint16)((T[5]+T[0]) * 7500.0);
     }
-    */
+
 
     DRV8301_PWMSet(*temp);
 }
