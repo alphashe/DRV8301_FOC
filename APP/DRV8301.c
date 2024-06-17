@@ -7,7 +7,6 @@
 
 #include <DRV8301.h>
 float theta=0;
-_iq IQtheta=0;
 
 void DRV8301_Init(struct struct_DRV8301* temp){
     //static struct struct_DRV8301 drv8301;
@@ -338,17 +337,6 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     U1 = ctr.Ibeta;                                 //0~1
     U2 = 0.5 * ctr.Ibeta - 0.866 * ctr.Ialpha;      //0~1
     U3 = 0.5 * ctr.Ibeta + 0.866 * ctr.Ialpha;      //0~1
-
-    /////////////////////IQmath/////////////////////
-    _iq IQU1, IQU2, IQU3;
-    _iq IQT[7] = {_IQ(0)};
-    ctr.IQA = _IQ(0.2);
-    ctr.IQIalpha = _IQmpy(_IQcos(IQtheta), ctr.IQA);
-    ctr.IQIbeta = _IQmpy(_IQsin(IQtheta), ctr.IQA);
-    IQU1 = ctr.IQIbeta;
-    IQU2 = _IQmpy(_IQ(0.5), ctr.IQIbeta) - _IQmpy(-IQ(0.866), ctr.IQIalpha);
-    IQU2 = _IQmpy(_IQ(0.5), ctr.IQIbeta) + _IQmpy(-IQ(0.866), ctr.IQIalpha);
-
 
 
 
