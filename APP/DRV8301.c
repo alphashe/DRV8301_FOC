@@ -334,14 +334,9 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     ctr.A = (0.2);
     ctr.Ialpha = cos(theta) * ctr.A;
     ctr.Ibeta = sin(theta) * ctr.A;
-    U1 = ctr.Ibeta;                                 //0~1
-    U2 = 0.5 * ctr.Ibeta - 0.866 * ctr.Ialpha;      //0~1
-    U3 = 0.5 * ctr.Ibeta + 0.866 * ctr.Ialpha;      //0~1
-
-    _iq a, b, c;
-    a = _IQ(2.1);
-    b = _IQcos(a);
-    c = _IQmpy(a, b);
+    U1 = 0.866 * (ctr.Ibeta);                                 //0~1
+    U2 = 0.866 * (0.5 * ctr.Ibeta - 0.866 * ctr.Ialpha);      //0~1
+    U3 = 0.866 * (0.5 * ctr.Ibeta + 0.866 * ctr.Ialpha);      //0~1  max value is sqr(3)/2
 
 
     //    float
@@ -406,14 +401,20 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         temp->PWMC = (Uint16)((T[5]+T[0]) * 7500.0);
     }
 
-
     DRV8301_PWMSet(*temp);
 }
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr){
 	ctr->Ialpha = temp.Ia - 0.5*temp.Ib - 0.5*temp.Ic;
 	ctr->Ibeta = 0.866*temp.Ib - 0.866*temp.Ic;
 }
-void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr){
 
+
+void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr){
 	ctr->Id = cos(theta)*ctr->Ialpha + sin(theta)*ctr->Ibeta;
+	ctr->Iq = -sin(theta)*ctr->Ialpha + cos(theta)*ctr->Ibeta;
 }
+
+void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctr){
+
+}
+

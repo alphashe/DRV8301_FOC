@@ -127,7 +127,7 @@ void DRV8301_SPWM(struct struct_DRV8301* temp);
 void DRV8301_SVPWM(struct struct_DRV8301* temp);
 void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr);
 void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr);
-
+void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctr);
 //if error, return 1. else return 0
 U8 DRV8301_Check(struct struct_DRV8301* temp);
 

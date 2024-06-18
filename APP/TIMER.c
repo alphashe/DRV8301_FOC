@@ -9,7 +9,7 @@
  *
  */
 
-#include "TIME.h"
+#include "TIMER.h"
 
 void TIM0_Init(Uint32 divide, Uint32 count){
     EALLOW;
