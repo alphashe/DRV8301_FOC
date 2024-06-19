@@ -40,7 +40,8 @@
 #define PWM_LC(D)   EPwm1B_SetCompare(D);
 
 extern float theta;
-
+extern struct struct_DRV8301 drv8301;
+extern struct struct_DRV8301* pdrv8301;
 struct struct_DRV8301{
     //R0
     Uint16 Reg0;
@@ -84,6 +85,7 @@ struct struct_DRV8301{
     U8 nfault;
 
     //CTL pwm
+    Uint16 Period;
     Uint16 PWMA;
     Uint16 PWMB;
     Uint16 PWMC;

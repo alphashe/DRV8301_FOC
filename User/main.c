@@ -26,14 +26,14 @@ void main(void){
     //DINT;
     float fx = 0;
     float step =1000.0;
-    struct struct_DRV8301 drv8301;
-    struct struct_DRV8301* pdrv8301 = &drv8301;
+    //struct struct_DRV8301 drv8301;
+    //struct struct_DRV8301* pdrv8301 = &drv8301;
 	InitPieCtrl();
 	IER = 0x0000;   //disable all interrupt
 	IFR = 0x0000;   //clear all interrupt flag
 	InitPieVectTable();
 
-	TIM0_Init(150-1, 700000-1);    //150MHz 150 divide ->1uS, count 700*1000  ->700mS
+	TIM0_Init(3-1, 1000-1);    //150MHz 3 divide ->50Mhz, count 1000  ->50kHz
 	DELAY_US(100);
     LED_Init();
     DELAY_US(2000000);
@@ -50,11 +50,8 @@ void main(void){
 	    //DRV8301_PWMSet(*pdrv8301);
 	    //DELAY_US(50*1000);
 	    //DELAY_US(1);
-	    DRV8301_SVPWM(pdrv8301);
-	    theta += PI/step;
-	    if(theta > 2*PI)
-	        theta=0;
-	    fx = Scan_PressKey();
+
+	   // fx = Scan_PressKey();
 
 	    if(fx == 1){
 	        step += 200;
@@ -63,9 +60,9 @@ void main(void){
 	    if(fx == 4){
 	        step -= 200;
 	    }
-	    OLED_ShowString(0, 2*8, "step=",1);
-	    OLED_ShowInt(40, 2*8, step, 1);
-	    OLED_Refresh_fix(40, 127, 2);
+	    DRV8301_SenseGet(pdrv8301);
+	    DRV8301_Display(drv8301);
+	    OLED_Refresh();
 	}
 }
 

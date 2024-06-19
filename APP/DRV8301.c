@@ -7,17 +7,20 @@
 
 #include <DRV8301.h>
 float theta=0;
+struct struct_DRV8301 drv8301;
+struct struct_DRV8301* pdrv8301 = &drv8301;
 
 void DRV8301_Init(struct struct_DRV8301* temp){
     //static struct struct_DRV8301 drv8301;
+    temp->Period = 3000;    //150MHz 50kHz/2 = 25kHz
     temp->PWMA = 0;
     temp->PWMB = 0;
     temp->PWMC = 0;
     SPI_Init();
     ADC_Init();
-    EPWM1_Init(7500);   //150MHz 150 *50 =20khz
-    EPWM2_Init(7500);
-    EPWM3_Init(7500);
+    EPWM1_Init(temp->Period);   //150MHz 150 *50 =20khz
+    EPWM2_Init(temp->Period);
+    EPWM3_Init(temp->Period);
     DRV8301GPIO_Init();
 
     DRV8301_PWMOff(temp);
@@ -35,9 +38,12 @@ void DRV8301_menu(void){
     OLED_ShowString(0, 2*8, "EN_GATE:", 1); //8*6
     OLED_ShowString(68, 2*8, "DC_CAL:", 1); //7*6
 
-    OLED_ShowString(0, 3*8, "HELLA:", 1);   //6*6
-    OLED_ShowString(64, 3*8, "HELLB:", 1);   //6*6
-    OLED_ShowString(0, 4*8, "HELLC:", 1);   //6*6
+    //OLED_ShowString(0, 3*8, "HELLA:", 1);   //6*6
+    //OLED_ShowString(64, 3*8, "HELLB:", 1);   //6*6
+    //OLED_ShowString(0, 4*8, "HELLC:", 1);   //6*6
+    OLED_ShowString(0, 3*8, "PWMA:", 1);   //6*6
+    OLED_ShowString(64, 3*8, "PWMB:", 1);   //6*6
+    OLED_ShowString(0, 4*8, "PWMC:", 1);   //6*6
     OLED_ShowString(0, 5*8, "SO1:", 1);     //4*6
     OLED_ShowString(64, 5*8, "SO2:", 1);     //4*6
 }
@@ -64,7 +70,11 @@ void DRV8301_Display(struct struct_DRV8301 temp){
     OLED_ShowInt(6*6, 3*8, temp.hella, 1);
     OLED_ShowInt(6*6+64, 3*8, temp.hellb, 1);
     OLED_ShowInt(6*6, 4*8, temp.hellc, 1);
-
+/*
+    OLED_ShowInt(6*6, 3*8, temp.PWMA, 1);
+    OLED_ShowInt(6*6+64, 3*8, temp.PWMB, 1);
+    OLED_ShowInt(6*6, 4*8, temp.PWMC, 1);
+*/
 
     OLED_Refresh();
 }
@@ -142,12 +152,12 @@ void DRV8301GPIO_Init(void){
 void DRV8301_PWMSet(struct struct_DRV8301 temp){
 
     //limit max Duty max 95%.
-    if(temp.PWMA>(75*95))
-        temp.PWMA = 75*95;
-    if(temp.PWMB>(75*95))
-        temp.PWMB = 75*95;
-    if(temp.PWMC>(75*95))
-        temp.PWMC = 75*95;
+    if(temp.PWMA>(temp.Period*0.95))
+        temp.PWMA = temp.Period*0.95;
+    if(temp.PWMB>(temp.Period*0.95))
+        temp.PWMB = temp.Period*0.95;
+    if(temp.PWMC>(temp.Period*0.95))
+        temp.PWMC = temp.Period*0.95;
 
     PWM_HA(temp.PWMA);
     PWM_LA(temp.PWMA);
@@ -278,7 +288,7 @@ U8 DRV8301_Check(struct struct_DRV8301* temp){
 }
 
 void DRV8301_SixStep(struct struct_DRV8301* temp){
-    DRV8301_SenseGet(temp);
+    //DRV8301_SenseGet(temp);
     //hell:abc
     if(temp->hell == 0b001){
         temp->PWMA = 500;
@@ -331,7 +341,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
 
     float U1, U2, U3;
     float T[7] = {0};
-    ctr.A = (0.2);
+    ctr.A = (0.4);
     ctr.Ialpha = cos(theta) * ctr.A;
     ctr.Ibeta = sin(theta) * ctr.A;
     U1 = 0.866 * (ctr.Ibeta);                                 //0~1
@@ -345,9 +355,12 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         T[4] = -U2;     //100
         T[6] = U1;      //110
         T[0] = (1-T[6] - T[4])/2;   //000 & 111
-        temp->PWMA = (Uint16)((T[6]+T[4]+T[0]) * 7500.0);
-        temp->PWMB = (Uint16)((T[6]+T[0]) * 7500.0);
-        temp->PWMC = (Uint16)((T[0]) * 7500.0);
+        //temp->PWMA = (Uint16)((T[6]+T[4]+T[0]) * 7500.0);
+        //temp->PWMB = (Uint16)((T[6]+T[0]) * 7500.0);
+        //temp->PWMC = (Uint16)((T[0]) * 7500.0);
+        temp->PWMA = (Uint16)((1 - 0.5 * (T[6] + T[4] + T[0])) * temp->Period);     //PWM mode is up&down ,Duty = Period *(1-T/2)
+        temp->PWMB = (Uint16)((1 - 0.5 * (T[6] + T[0])) * temp->Period);
+        temp->PWMC = (Uint16)((1 - 0.5 * (T[0])) * temp->Period);
     }
 
     //sector 2
@@ -355,9 +368,9 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         T[2] = U2;     //010
         T[6] = U3;     //110
         T[0] = (1-T[2] - T[6])/2;   //000 & 111
-        temp->PWMA = (Uint16)((T[6]+T[0]) * 7500.0);
-        temp->PWMB = (Uint16)((T[2]+T[6]+T[0]) * 7500.0);
-        temp->PWMC = (Uint16)((T[0]) * 7500.0);
+        temp->PWMA = (Uint16)((1 - 0.5 * (T[6] + T[0])) * (float)temp->Period);
+        temp->PWMB = (Uint16)((1 - 0.5 * (T[2] + T[6] + T[0])) * (float)temp->Period);
+        temp->PWMC = (Uint16)((1 - 0.5 * (T[0])) * (float)temp->Period);
     }
 
     //sector 3
@@ -365,9 +378,9 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         T[3] = -U3;     //011
         T[2] = U1;      //010
         T[0] = (1-T[3] - T[2])/2;   //000 & 111
-        temp->PWMA = (Uint16)((T[0]) * 7500.0);
-        temp->PWMB = (Uint16)((T[3]+T[2]+T[0]) * 7500.0);
-        temp->PWMC = (Uint16)((T[3]+T[0]) * 7500.0);
+        temp->PWMA = (Uint16)((1 - 0.5 * (T[0])) * temp->Period);
+        temp->PWMB = (Uint16)((1 - 0.5 * (T[3] + T[2] + T[0])) * temp->Period);
+        temp->PWMC = (Uint16)((1 - 0.5 * (T[3] + T[0])) * temp->Period);
     }
 
     //sector 4
@@ -375,9 +388,12 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         T[1] = -U1;      //001
         T[3] = U2;       //011
         T[0] = (1-T[1] - T[3])/2;   //000 & 111
-        temp->PWMA = (Uint16)((T[0]) * 7500.0);
-        temp->PWMB = (Uint16)((T[3]+T[0]) * 7500.0);
-        temp->PWMC = (Uint16)((T[1]+T[3]+T[0]) * 7500.0);
+        //temp->PWMA = (Uint16)((T[0]) * 7500.0);
+        //temp->PWMB = (Uint16)((T[3]+T[0]) * 7500.0);
+        //temp->PWMC = (Uint16)((T[1]+T[3]+T[0]) * 7500.0);
+        temp->PWMA = (Uint16)((1 - 0.5 * (T[0])) * temp->Period);
+        temp->PWMB = (Uint16)((1 - 0.5 * (T[3] + T[0])) * temp->Period);
+        temp->PWMC = (Uint16)((1 - 0.5 * (T[1] + T[3] + T[0])) * temp->Period);
     }
 
     //sector 5
@@ -385,9 +401,12 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         T[5] = -U2;      //101
         T[1] = -U3;       //001
         T[0] = (1-T[5] - T[1])/2;   //000 & 111
-        temp->PWMA = (Uint16)((T[5]+T[0]) * 7500.0);
-        temp->PWMB = (Uint16)((T[0]) * 7500.0);
-        temp->PWMC = (Uint16)((T[5]+T[1]+T[0]) * 7500.0);
+        //temp->PWMA = (Uint16)((T[5]+T[0]) * 7500.0);
+        //temp->PWMB = (Uint16)((T[0]) * 7500.0);
+        //temp->PWMC = (Uint16)((T[5]+T[1]+T[0]) * 7500.0);
+        temp->PWMA = (Uint16)((1 - 0.5 * (T[5] + T[0])) * temp->Period);
+        temp->PWMB = (Uint16)((1 - 0.5 * (T[0])) * temp->Period);
+        temp->PWMC = (Uint16)((1 - 0.5 * (T[5] + T[1] + T[0])) * temp->Period);
     }
 
 
@@ -396,9 +415,12 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
         T[4] = U3;      //100
         T[5] = -U1;       //101
         T[0] = (1-T[4] - T[5])/2;   //000 & 111
-        temp->PWMA = (Uint16)((T[4]+T[5]+T[0]) * 7500.0);
-        temp->PWMB = (Uint16)((T[0]) * 7500.0);
-        temp->PWMC = (Uint16)((T[5]+T[0]) * 7500.0);
+        //temp->PWMA = (Uint16)((T[4]+T[5]+T[0]) * 7500.0);
+        //temp->PWMB = (Uint16)((T[0]) * 7500.0);
+        //temp->PWMC = (Uint16)((T[5]+T[0]) * 7500.0);
+        temp->PWMA = (Uint16)((1 - 0.5 * (T[4] + T[5] + T[0])) * temp->Period);
+        temp->PWMB = (Uint16)((1 - 0.5 * (T[0])) * temp->Period);
+        temp->PWMC = (Uint16)((1 - 0.5 * (T[5] + T[0])) * temp->Period);
     }
 
     DRV8301_PWMSet(*temp);

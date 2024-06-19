@@ -24,7 +24,7 @@ void EPWM1_Init(Uint16 tbprd){
     EPwm1Regs.TBPHS.half.TBPHS = 0;
     EPwm1Regs.TBCTR = 0x0000;   //Clear counter
 
-    EPwm1Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP; // count up
+    EPwm1Regs.TBCTL.bit.CTRMODE = TB_COUNT_UPDOWN;// // count up&down;
     EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
     EPwm1Regs.TBCTL.bit.CLKDIV = TB_DIV1;
 
@@ -39,10 +39,10 @@ void EPWM1_Init(Uint16 tbprd){
     EPwm1Regs.CMPB = 0;                 //Set Compare B value
 
     // Set actions
-    EPwm1Regs.AQCTLA.bit.ZRO = AQ_SET; // Set PWM1A on Zero
-    EPwm1Regs.AQCTLA.bit.CAU = AQ_CLEAR; // Clear PWM1A on event A, up count
-    EPwm1Regs.AQCTLB.bit.ZRO = AQ_CLEAR; // Set PWM1B on Zero
-    EPwm1Regs.AQCTLB.bit.CBU = AQ_SET; // Clear PWM1B on event B, up count
+    EPwm1Regs.AQCTLA.bit.CAD = AQ_CLEAR; // Set PWM1A on Zero
+    EPwm1Regs.AQCTLA.bit.CAU = AQ_SET; // Clear PWM1A on event A, up count
+    EPwm1Regs.AQCTLB.bit.CAD = AQ_SET; // Set PWM1B on Zero
+    EPwm1Regs.AQCTLB.bit.CBU = AQ_CLEAR; // Clear PWM1B on event B, up count
 
    // EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE; // enable Dead-band module
     //EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; // Active Hi complementary
@@ -72,10 +72,11 @@ void EPWM2_Init(Uint16 tbprd){
     EPwm2Regs.TBPRD = tbprd;
     EPwm2Regs.TBCTL.bit.SYNCOSEL = TB_CTR_ZERO; //SYNC OUTPUT when CTR=0
     EPwm2Regs.TBCTL.bit.PHSEN = TB_ENABLE;      //sync in
+    EPwm2Regs.TBCTL.bit.PHSDIR = TB_UP;
     EPwm2Regs.TBPHS.half.TBPHS = 0;
     EPwm2Regs.TBCTR = 0x0000;   //Clear counter
 
-    EPwm2Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP; // count up
+    EPwm2Regs.TBCTL.bit.CTRMODE = TB_COUNT_UPDOWN; // count up
     EPwm2Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
     EPwm2Regs.TBCTL.bit.CLKDIV = TB_DIV1;
 
@@ -90,10 +91,10 @@ void EPWM2_Init(Uint16 tbprd){
     EPwm2Regs.CMPB = 0;                 //Set Compare B value
 
     // Set actions
-    EPwm2Regs.AQCTLA.bit.ZRO = AQ_SET; // Set PWM1A on Zero
-    EPwm2Regs.AQCTLA.bit.CAU = AQ_CLEAR; // Clear PWM1A on event A, up count
-    EPwm2Regs.AQCTLB.bit.ZRO = AQ_CLEAR; // Set PWM1B on Zero
-    EPwm2Regs.AQCTLB.bit.CBU = AQ_SET; // Clear PWM1B on event B, up count
+    EPwm2Regs.AQCTLA.bit.CAD = AQ_CLEAR; // Set PWM1A on A down count
+    EPwm2Regs.AQCTLA.bit.CAU = AQ_SET; // Clear PWM1A on event A, up count
+    EPwm2Regs.AQCTLB.bit.CAD = AQ_SET; //
+    EPwm2Regs.AQCTLB.bit.CBU = AQ_CLEAR; //
 
    // EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE; // enable Dead-band module
     //EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; // Active Hi complementary
@@ -123,10 +124,11 @@ void EPWM3_Init(Uint16 tbprd){
     EPwm3Regs.TBPRD = tbprd;
     EPwm3Regs.TBCTL.bit.SYNCOSEL = TB_SYNC_DISABLE; //SYNC OUTPUT when CTR=0
     EPwm3Regs.TBCTL.bit.PHSEN = TB_ENABLE;      //sync in
+    EPwm3Regs.TBCTL.bit.PHSDIR = TB_UP;
     EPwm3Regs.TBPHS.half.TBPHS = 0;
     EPwm3Regs.TBCTR = 0x0000;   //Clear counter
 
-    EPwm3Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP; // count up
+    EPwm3Regs.TBCTL.bit.CTRMODE = TB_COUNT_UPDOWN; // count up
     EPwm3Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;
     EPwm3Regs.TBCTL.bit.CLKDIV = TB_DIV1;
 
@@ -141,10 +143,10 @@ void EPWM3_Init(Uint16 tbprd){
     EPwm3Regs.CMPB = 0;                 //Set Compare B value
 
     // Set actions
-    EPwm3Regs.AQCTLA.bit.ZRO = AQ_SET; // Set PWM1A on Zero
-    EPwm3Regs.AQCTLA.bit.CAU = AQ_CLEAR; // Clear PWM1A on event A, up count
-    EPwm3Regs.AQCTLB.bit.ZRO = AQ_CLEAR; // Set PWM1B on Zero
-    EPwm3Regs.AQCTLB.bit.CBU = AQ_SET; // Clear PWM1B on event B, up count
+    EPwm3Regs.AQCTLA.bit.CAD = AQ_CLEAR; // Set PWM1A on Zero
+    EPwm3Regs.AQCTLA.bit.CAU = AQ_SET; // Clear PWM1A on event A, up count
+    EPwm3Regs.AQCTLB.bit.CAD = AQ_SET; // Set PWM1B on Zero
+    EPwm3Regs.AQCTLB.bit.CBU = AQ_CLEAR; // Clear PWM1B on event B, up count
 
    // EPwm1Regs.DBCTL.bit.OUT_MODE = DB_FULL_ENABLE; // enable Dead-band module
     //EPwm1Regs.DBCTL.bit.POLSEL = DB_ACTV_HIC; // Active Hi complementary

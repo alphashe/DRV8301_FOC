@@ -12,7 +12,7 @@
 #include "DSP2833x_Examples.h"
 #include "LED.h"
 #include "Global.h"
-
+#include "DRV8301.h"
 
 void TIM0_Init(Uint32 divide, Uint32 count);
 
