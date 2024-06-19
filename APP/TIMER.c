@@ -42,14 +42,4 @@ void TIM0_Init(Uint32 divide, Uint32 count){
     ERTM;//enable global interrupt
 }
 
-interrupt void TIM0_Int(void){
-    EALLOW;
-    PieCtrlRegs.PIEACK.bit.ACK1 = 1;
-    EDIS;
-    theta += PI/3000;
-    if(theta > 2*PI){
-        theta=0;
-        LED3_TOGGLE;
-    }
-    DRV8301_SVPWM(pdrv8301);
-}
+

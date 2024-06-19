@@ -16,6 +16,6 @@
 
 void TIM0_Init(Uint32 divide, Uint32 count);
 
-interrupt void TIM0_Int(void);
+extern interrupt void TIM0_Int(void);
 
 #endif /* APP_INCLUDE_TIMER_H_ */

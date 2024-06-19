@@ -66,3 +66,15 @@ void main(void){
 	}
 }
 
+interrupt void TIM0_Int(void){
+    EALLOW;
+    PieCtrlRegs.PIEACK.bit.ACK1 = 1;
+    EDIS;
+    LED3_TOGGLE;
+    theta += PI/3000;
+    if(theta > 2*PI){
+        theta=0;
+    }
+    DRV8301_SVPWM(pdrv8301);
+    LED3_TOGGLE;// float format 11.4uS
+}
