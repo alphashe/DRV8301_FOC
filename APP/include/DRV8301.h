@@ -42,7 +42,11 @@
 extern float theta;
 extern struct struct_DRV8301 drv8301;
 extern struct struct_DRV8301* pdrv8301;
-struct struct_DRV8301{
+
+typedef struct _HAL_Obj {
+    DRV8301_HAL drv8301_handle;
+}HAL_Obj;
+typedef struct _DRV8301_HAL{
     //R0
     Uint16 Reg0;
     U8 fault;
@@ -99,7 +103,7 @@ struct struct_DRV8301{
     float Ib;
     float Ic;
 
-};
+}DRV8301_HAL;
 
 struct Contrl{
     float Ialpha;

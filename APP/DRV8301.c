@@ -255,25 +255,11 @@ void DRV8301_DISSense(struct struct_DRV8301* temp){
 void DRV8301_SenseGet(struct struct_DRV8301* temp){
     Uint16 so1=0, so2=0;
     Uint16 a=0, b=0, c=0;
-    Uint16 test[15]=0;
     so1 = Read_ADCValueResult0();
     so2 = Read_ADCValueResult1();
     c = Read_ADCValueResult2();
     b = Read_ADCValueResult3();
     a = Read_ADCValueResult4();
-    test[0] = Read_ADCValueResult5();
-    test[1] = Read_ADCValueResult6();
-    test[2] = Read_ADCValueResult7();
-    test[3] = Read_ADCValueResult8();
-    test[4] = Read_ADCValueResult9();
-    test[5] = Read_ADCValueResult10();
-    test[6] = Read_ADCValueResult11();
-    test[7] = Read_ADCValueResult12();
-    test[8] = Read_ADCValueResult13();
-    test[9] = Read_ADCValueResult14();
-    test[10] = Read_ADCValueResult15();
-
-
 
     temp->hell = 0;
     temp->Ib = (so1/4096.0 *3) / 0.08;
@@ -302,7 +288,7 @@ U8 DRV8301_Check(struct struct_DRV8301* temp){
 }
 
 void DRV8301_SixStep(struct struct_DRV8301* temp){
-    //DRV8301_SenseGet(temp);
+    DRV8301_SenseGet(temp);
     //hell:abc
     if(temp->hell == 0b001){
         temp->PWMA = 500;
@@ -451,6 +437,8 @@ void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr){
 }
 
 void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctr){
+    ctr->Ialpha = ctr->Id * cos(thata) - ctr->Iq * sin(theta);
+    ctr->Ialpha = ctr->Id * sin(thata) + ctr->Iq * cos(theta);
 
 }
 
