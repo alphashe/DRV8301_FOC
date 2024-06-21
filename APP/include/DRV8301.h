@@ -39,13 +39,62 @@
 #define PWM_HC(D)   EPwm1A_SetCompare(D);
 #define PWM_LC(D)   EPwm1B_SetCompare(D);
 
-extern float theta;
-extern struct struct_DRV8301 drv8301;
-extern struct struct_DRV8301* pdrv8301;
+//extern HAL_Obj hal;
 
-typedef struct _HAL_Obj {
-    DRV8301_HAL drv8301_handle;
-}HAL_Obj;
+//extern struct struct_DRV8301 drv8301;
+//extern struct struct_DRV8301* pdrv8301;
+
+
+
+//////////////////////////////DRV8301 Register//////////////////////////////
+//R2 bit [1,0]
+enum GATE_CURRENT{  
+    gate_current_1p7A,
+    gate_current_0p7A,
+    gate_current_0p25A
+};
+//R2 bit[2]
+enum PWM_MODE{
+    pwm_mode_sixpwm,
+    pwm_mode_threepwm
+};
+//R2 bit[5,4]
+enum OCP_MODE{
+    ocp_mode_current_limit,
+    ocp_mode_oc_latch,
+    ocp_mode_report,
+    ocp_mode_disable
+};
+//R2 bit[10...6]
+enum OC_ADJ_SET {
+    oc_adj_set_0p060, oc_adj_set_0p068, oc_adj_set_0p076, oc_adj_set_0p086, oc_adj_set_0p097, oc_adj_set_0p109, oc_adj_set_0p123, oc_adj_set_1p138,
+    oc_adj_set_0p155, oc_adj_set_0p175, oc_adj_set_0p197, oc_adj_set_0p222, oc_adj_set_0p250, oc_adj_set_0p282, oc_adj_set_0p317, oc_adj_set_1p358,
+    oc_adj_set_0p403, oc_adj_set_0p454, oc_adj_set_0p511, oc_adj_set_0p576, oc_adj_set_0p648, oc_adj_set_0p730, oc_adj_set_0p822, oc_adj_set_1p926,
+    oc_adj_set_1p043, oc_adj_set_2p175, oc_adj_set_1p324, oc_adj_set_1p491, oc_adj_set_1p679, oc_adj_set_1p892, oc_adj_set_2p131, oc_adj_set_2p4
+};
+//R3 bit[1,0]
+enum OCTW_MODE {
+    octw_mode_otoc,
+    octw_mode_ot,
+    octw_mode_oc
+};
+//R3 bit[3,2]
+enum GAIN {
+    gain_10,
+    gain_20,
+    gain_40,
+    gain_80
+};
+//R3 bit[4] [5]
+enum DC_CAL_CH12 {
+    dc_cal_connect,
+    dc_cal_short
+};
+//R3 bit[6]
+enum OC_TOFF {
+    oc_toff_CBC,
+    oc_toff_offtime
+};
 typedef struct _DRV8301_HAL{
     //R0
     Uint16 Reg0;
@@ -71,7 +120,7 @@ typedef struct _DRV8301_HAL{
     U8 gate_current;
     U8 pwm_mode;
     U8 ocp_mode;
-    U8 adj_set;
+    U8 oc_adj_set;
 
     //R3
     Uint16 Reg3;
@@ -88,12 +137,19 @@ typedef struct _DRV8301_HAL{
     U8 noctw;
     U8 nfault;
 
+}DRV8301_Obj;
+typedef struct _DRV8301_HAL* DRV8301_Handle;
+
+typedef struct _EPWM_HAL {
     //CTL pwm
     Uint16 Period;
     Uint16 PWMA;
     Uint16 PWMB;
     Uint16 PWMC;
+}EPWM_Obj;
+typedef struct _EPWM_HAL* EPWM_Handle;
 
+typedef struct _SENCE_HAL {
     //Sense
     float hella;
     float hellb;
@@ -102,40 +158,69 @@ typedef struct _DRV8301_HAL{
     float Ia;
     float Ib;
     float Ic;
+}SENCE_Obj;
+typedef struct _SENCE_HAL* SENCE_Handle;
 
-}DRV8301_HAL;
-
-struct Contrl{
+typedef struct _CONTRL_HAL{
     float Ialpha;
     float Ibeta;
     float Id;
     float Iq;
 
     float A;
-};
+    float theta;
+}CONTRL_Obj;
+typedef struct _CONTRL_HAL* CONTRL_Handle;
 
-/////////////////////////funciton/////////////////////////////////////////
-void DRV8301_Init(struct struct_DRV8301* temp);
+typedef struct _HAL_Obj {
+    DRV8301_Handle drv8301handle;
+    EPWM_Handle    epwmhandle;
+    SENCE_Handle   sencehandle;
+    CONTRL_Handle  contrlhandle;
+}HAL_Obj;
+typedef struct _HAL_Obj* HAL_handle;
+
+/////////////////////////handle funciton/////////////////////////////////////////
+HAL_handle Hal_Init(HAL_Obj hal);
+//DRV8301_Handle HAL_DRV8301_Init(void);
+EPWM_Handle EPWM_Init(void);
+SENCE_Handle SENCE_Init(void);
+CONTRL_Handle CONTRL_Init(void);
+void SetParam(HAL_handle handle);
+void DRV8301_Config(HAL_handle handle);
+
+
+
+
+
+
+
+
+
+/// 
+/// function
+/// 
+void DRV8301_Init(HAL_handle handle);
 void DRV8301GPIO_Init(void);
-void DRV8301_menu(void);
-void DRV8301_Display(struct struct_DRV8301 temp);
-void DRV8301_Read(struct struct_DRV8301* temp);
-void DRV8301_PWMSet(struct struct_DRV8301 temp);
-void DRV8301_PWMOff(struct struct_DRV8301* temp);
-void DRV8301_Enable(struct struct_DRV8301* temp);
-void DRV8301_Disable(struct struct_DRV8301* temp);
-void DRV8301_ENSense(struct struct_DRV8301* temp);
-void DRV8301_DISSense(struct struct_DRV8301* temp);
-void DRV8301_SenseGet(struct struct_DRV8301* temp);
+void DRV8301_Display(HAL_handle handle);
+void DRV8301_Read(HAL_handle handle);
+void DRV8301_PWMSet(HAL_handle handle);
+void DRV8301_PWMOff(HAL_handle handle);
 
-void DRV8301_SixStep(struct struct_DRV8301* temp);
-void DRV8301_SPWM(struct struct_DRV8301* temp);
-void DRV8301_SVPWM(struct struct_DRV8301* temp);
-void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr);
-void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr);
-void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctr);
+void DRV8301_Enable(HAL_handle handle);
+void DRV8301_Disable(HAL_handle handle);
+void DRV8301_ENSense(HAL_handle handle);
+void DRV8301_DISSense(HAL_handle handle);
+void DRV8301_SenseGet(HAL_handle handle);
+
+void DRV8301_SixStep(HAL_handle handle);
+void DRV8301_SPWM(HAL_handle handle);
+void DRV8301_SVPWM(HAL_handle handle);
+void DRV8301_Clark(HAL_handle handle);
+void DRV8301_Park(HAL_handle handle);
+void DRV8301_Ipark(HAL_handle handle);
 //if error, return 1. else return 0
-U8 DRV8301_Check(struct struct_DRV8301* temp);
+U8 DRV8301_Check(HAL_handle handle);
 
 
 #endif /* APP_INCLUDE_DRV8301_H_ */

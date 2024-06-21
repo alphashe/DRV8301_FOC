@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\APP"
+    "\\APP",
+    "\\User"
   ],
-  "SelectedNode": "\\APP\\DRV8301.c",
+  "SelectedNode": "\\User\\main.c",
   "PreviewInSolutionExplorer": false
 }

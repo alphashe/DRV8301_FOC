@@ -17,6 +17,8 @@
 #include <PressKey.h>
 //定义变量
 
+HAL_Obj OBJ;
+HAL_handle handle;
 
 void main(void){
     MemCopy(&RamfuncsLoadStart, &RamfuncsLoadEnd, &RamfuncsRunStart);
@@ -43,9 +45,11 @@ void main(void){
 
     OLED_ShowPicture(34, 2, 60, 60, BtPic, 1);
     OLED_Refresh();
+    handle = Hal_Init(OBJ);
 
-    DRV8301_Init(pdrv8301);
-    theta = 0;
+    DRV8301_Init(handle);
+    DRV8301_Read(handle);
+    //theta = 0;
 	while(1){
 	    //DRV8301_PWMSet(*pdrv8301);
 	    //DELAY_US(50*1000);
@@ -60,8 +64,8 @@ void main(void){
 	    if(fx == 4){
 	        step -= 200;
 	    }
-	    DRV8301_SenseGet(pdrv8301);
-	    DRV8301_Display(drv8301);
+	    DRV8301_SenseGet(handle);
+	    DRV8301_Display(handle);
 	    OLED_Refresh();
 	}
 }
@@ -71,10 +75,14 @@ interrupt void TIM0_Int(void){
     PieCtrlRegs.PIEACK.bit.ACK1 = 1;
     EDIS;
     LED3_TOGGLE;
-    theta += PI/3000;
-    if(theta > 2*PI){
-        theta=0;
-    }
-    DRV8301_SVPWM(pdrv8301);
+    
+    //theta += PI/3000;
+    //if(theta > 2*PI){
+    //    theta=0;
+    //}
+    //DRV8301_SVPWM(pdrv8301);
+    handle->contrlhandle->theta += PI / 3000;
+    if (handle->contrlhandle->theta > 2 * PI)
+        handle->contrlhandle->theta = 0;
     LED3_TOGGLE;// float format 11.4uS
 }
