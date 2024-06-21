@@ -442,5 +442,4 @@ void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctr){
     ctr->Ialpha = cos(theta)*ctr->Id - sin(theta)*ctr->Iq;
     ctr->Ibeta = sin(theta)*ctr->Id - cos(theta)*ctr->Iq;
 }
-}
 
