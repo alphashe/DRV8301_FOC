@@ -6,10 +6,11 @@
  */
 
 #include <DRV8301.h>
-float theta=0;
+
 struct struct_DRV8301 drv8301;
 struct struct_DRV8301* pdrv8301 = &drv8301;
-
+struct Contrl ctr;
+struct Contrl* pctr = &ctr;
 void DRV8301_Init(struct struct_DRV8301* temp){
     //static struct struct_DRV8301 drv8301;
     temp->Period = 3000;    //150MHz 50kHz/2 = 25kHz
@@ -41,11 +42,8 @@ void DRV8301_menu(void){
     //OLED_ShowString(0, 3*8, "HELLA:", 1);   //6*6
     //OLED_ShowString(64, 3*8, "HELLB:", 1);   //6*6
     //OLED_ShowString(0, 4*8, "HELLC:", 1);   //6*6
-    OLED_ShowString(0, 3*8, "PWMA:", 1);   //6*6
-    OLED_ShowString(64, 3*8, "PWMB:", 1);   //6*6
-    OLED_ShowString(0, 4*8, "PWMC:", 1);   //6*6
-    OLED_ShowString(0, 5*8, "SO1:", 1);     //4*6
-    OLED_ShowString(64, 5*8, "SO2:", 1);     //4*6
+    OLED_ShowString(0, 3*8, "Speed:", 1);   //6*6
+    OLED_ShowString(64, 3*8, "TUQ:", 1);   //6*6
 }
 
 void DRV8301_Display(struct struct_DRV8301 temp){
@@ -67,14 +65,9 @@ void DRV8301_Display(struct struct_DRV8301 temp){
     else
         OLED_ShowString(7*6+68, 2*8, "off", 1);
 
-    OLED_ShowInt(6*6, 3*8, temp.hella, 1);
-    OLED_ShowInt(6*6+64, 3*8, temp.hellb, 1);
-    OLED_ShowInt(6*6, 4*8, temp.hellc, 1);
-/*
-    OLED_ShowInt(6*6, 3*8, temp.PWMA, 1);
-    OLED_ShowInt(6*6+64, 3*8, temp.PWMB, 1);
-    OLED_ShowInt(6*6, 4*8, temp.PWMC, 1);
-*/
+    OLED_ShowInt(6*6, 3*8, ctr.step, 1);
+    OLED_ShowInt(4*6+64, 3*8, (ctr.A*100), 1);
+
 
     OLED_Refresh();
 }
@@ -329,8 +322,8 @@ void DRV8301_SixStep(struct struct_DRV8301* temp){
 void DRV8301_SPWM(struct struct_DRV8301* temp){
 	//theta
     struct Contrl svpwm;
-    svpwm.Ialpha = cos(theta) * 0.2;
-    svpwm.Ibeta = sin(theta) * 0.2;
+    svpwm.Ialpha = cos(ctr.theta) * 0.2;
+    svpwm.Ibeta = sin(ctr.theta) * 0.2;
     temp->PWMA = (svpwm.Ialpha) * 3750 + 3750;
     temp->PWMB = (-0.5*svpwm.Ialpha + 0.866*svpwm.Ibeta) * 3750 + 3750;
     temp->PWMC = (-0.5*svpwm.Ialpha - 0.866*svpwm.Ibeta) * 3750 + 3750;
@@ -339,13 +332,13 @@ void DRV8301_SPWM(struct struct_DRV8301* temp){
 }
 
 void DRV8301_SVPWM(struct struct_DRV8301* temp){
-    struct Contrl ctr;
+    //struct Contrl ctr;
 
     float U1, U2, U3;
     float T[7] = {0};
     ctr.A = (0.4);
-    ctr.Ialpha = cos(theta) * ctr.A;
-    ctr.Ibeta = sin(theta) * ctr.A;
+    ctr.Ialpha = cos(ctr.theta) * ctr.A;
+    ctr.Ibeta = sin(ctr.theta) * ctr.A;
     U1 = 0.866 * (ctr.Ibeta);                                 //0~1
     U2 = 0.866 * (0.5 * ctr.Ibeta - 0.866 * ctr.Ialpha);      //0~1
     U3 = 0.866 * (0.5 * ctr.Ibeta + 0.866 * ctr.Ialpha);      //0~1  max value is sqr(3)/2
@@ -353,7 +346,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
 
     //    float
     //sector 1
-    if(theta >=0 && theta < PI/3){
+    if(ctr.theta >=0 && ctr.theta < PI/3){
         T[4] = -U2;     //100
         T[6] = U1;      //110
         T[0] = (1-T[6] - T[4])/2;   //000 & 111
@@ -366,7 +359,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     }
 
     //sector 2
-    if(theta >=PI/3 && theta < 2*PI/3){
+    if(ctr.theta >=PI/3 && ctr.theta < 2*PI/3){
         T[2] = U2;     //010
         T[6] = U3;     //110
         T[0] = (1-T[2] - T[6])/2;   //000 & 111
@@ -376,7 +369,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     }
 
     //sector 3
-    if(theta >=2*PI/3 && theta < PI){
+    if(ctr.theta >=2*PI/3 && ctr.theta < PI){
         T[3] = -U3;     //011
         T[2] = U1;      //010
         T[0] = (1-T[3] - T[2])/2;   //000 & 111
@@ -386,7 +379,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     }
 
     //sector 4
-    if(theta >=PI && theta < 4*PI/3){
+    if(ctr.theta >=PI && ctr.theta < 4*PI/3){
         T[1] = -U1;      //001
         T[3] = U2;       //011
         T[0] = (1-T[1] - T[3])/2;   //000 & 111
@@ -399,7 +392,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
     }
 
     //sector 5
-    if(theta >=4*PI/3 && theta < 5*PI/3){
+    if(ctr.theta >=4*PI/3 && ctr.theta < 5*PI/3){
         T[5] = -U2;      //101
         T[1] = -U3;       //001
         T[0] = (1-T[5] - T[1])/2;   //000 & 111
@@ -413,7 +406,7 @@ void DRV8301_SVPWM(struct struct_DRV8301* temp){
 
 
     //sector 6
-    if(theta >=5*PI/3 && theta < 2*PI){
+    if(ctr.theta >=5*PI/3 && ctr.theta < 2*PI){
         T[4] = U3;      //100
         T[5] = -U1;       //101
         T[0] = (1-T[4] - T[5])/2;   //000 & 111
@@ -433,13 +426,13 @@ void DRV8301_Clark(struct struct_DRV8301 temp, struct Contrl* ctr){
 }
 
 
-void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctr){
-	ctr->Id = cos(theta)*ctr->Ialpha + sin(theta)*ctr->Ibeta;
-	ctr->Iq = -sin(theta)*ctr->Ialpha + cos(theta)*ctr->Ibeta;
+void DRV8301_Park(struct struct_DRV8301 temp, struct Contrl* ctrhal){
+    ctrhal->Id = cos(ctrhal->theta)*ctrhal->Ialpha + sin(ctrhal->theta)*ctrhal->Ibeta;
+    ctrhal->Iq = -sin(ctrhal->theta)*ctrhal->Ialpha + cos(ctrhal->theta)*ctrhal->Ibeta;
 }
 
-void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctr){
-    ctr->Ialpha = cos(theta)*ctr->Id - sin(theta)*ctr->Iq;
-    ctr->Ibeta = sin(theta)*ctr->Id - cos(theta)*ctr->Iq;
+void DRV8301_Ipark(struct struct_DRV8301 temp, struct Contrl* ctrhal){
+    ctrhal->Ialpha = cos(ctrhal->theta)*ctrhal->Id - sin(ctrhal->theta)*ctrhal->Iq;
+    ctrhal->Ibeta = sin(ctrhal->theta)*ctrhal->Id + cos(ctrhal->theta)*ctrhal->Iq;
 }
 

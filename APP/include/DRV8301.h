@@ -39,9 +39,11 @@
 #define PWM_HC(D)   EPwm1A_SetCompare(D);
 #define PWM_LC(D)   EPwm1B_SetCompare(D);
 
-extern float theta;
+
 extern struct struct_DRV8301 drv8301;
 extern struct struct_DRV8301* pdrv8301;
+extern struct Contrl ctr;
+extern struct Contrl* pctr;
 struct struct_DRV8301{
     //R0
     Uint16 Reg0;
@@ -108,6 +110,8 @@ struct Contrl{
     float Iq;
 
     float A;
+    float theta;
+    float step;
 };
 
 /////////////////////////funciton/////////////////////////////////////////

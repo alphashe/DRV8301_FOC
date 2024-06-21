@@ -7,7 +7,7 @@
 
 #include <PressKey.h>
 
-void Key_Init(void){
+void PressKey_Init(void){
     EALLOW;
     SysCtrlRegs.PCLKCR3.bit.GPIOINENCLK = 1;    //enable GPIO input clock
 
